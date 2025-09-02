@@ -1,0 +1,11 @@
+ Récapitulatif
+Breakpoint	
+sm	640 px
+md	768 px
+lg	1024 px
+xl	1280 px
+2xl	1536 px
+
+
+grid grid-cols-2 
+    sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5

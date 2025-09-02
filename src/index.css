@@ -1,0 +1,104 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #1E2939;
+  --color-secondary: #ec4899;
+  --font-open-sans: 'Open Sans', sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 90.5%;
+}
+
+
+.bgImage{
+  background-image: url('/accueil.jpeg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+.bgImageCatalogue {
+  background-image: url('/catalogue.jpeg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+.bgImagePack {
+  background-image: url('/packs.jpeg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+.bgImageReservation {
+  background-image: url('/calendar.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+#carousel {
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+.carousel-item {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+#carousel::-webkit-scrollbar {
+  width: 0px; 
+}
+
+@keyframes revealText {
+  0% {
+    width: 0;
+  }
+  50% {
+    width: 100%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+@keyframes blinkCursor {
+  0%, 100% {
+    border-color: transparent;
+  }
+  50% {
+    border-color: currentColor;
+  }
+}
+
+.animate-revealText {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 2px solid currentColor;
+  animation:
+    revealText 15s steps(17) infinite,
+    blinkCursor 0.75s step-end infinite;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
