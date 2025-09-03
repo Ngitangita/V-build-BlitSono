@@ -4,7 +4,7 @@ import ProtectedLayout from "../components/layouts/ProtectedLayout";
 import HomePage from "../pages/client/HomePage";
 import Catalogue from "../pages/client/Catalogue";
 // import Basket from "../pages/client/Basket";
-// import MaterialDetail from "../pages/client/MaterialDetail";
+import MaterielDetail from "../pages/client/MaterielDetail";
 // import PackMateriels from "../pages/client/PackMateriels";
 // import EspaceClient from "../pages/client/Espace-client";
 // import Devis from "../pages/client/Devis";
@@ -43,7 +43,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <HomePage /> },
       { path: "catalogues", element: <Catalogue /> },
-    //   { path: "materiel/:id", element: <MaterialDetail /> },
+      { path: "materiel/:id", element: <MaterielDetail /> },
     //   { path: "pack-materiels", element: <PackMateriels /> },
 
     //   {
