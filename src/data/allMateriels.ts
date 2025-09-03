@@ -4,7 +4,7 @@ export const allMateriels: (MaterielsType & { path?: string })[] = [
   {
       id: 1,
       nom: "Enceinte JBL EON610",
-      categorieId: { name: "Sonorisation" },
+      categorieId: { nom: "Sonorisation" },
       image_url: "/sonorisation.jpg",
       prix_location: 100,
       stock_total: 50,
@@ -15,7 +15,7 @@ export const allMateriels: (MaterielsType & { path?: string })[] = [
   {
       id: 2,
       nom: "Deejay",
-      categorieId: { name: "Animation" },
+      categorieId: { nom: "Animation" },
       image_url: "/deejay.jpg",
       prix_location: 120,
       stock_total: 20,
@@ -26,7 +26,7 @@ export const allMateriels: (MaterielsType & { path?: string })[] = [
   {
       id: 3,
       nom: "Home studio",
-      categorieId: { name: "Studio" },
+      categorieId: { nom: "Studio" },
       image_url: "/home-studio.jpeg",
       prix_location: 80,
       stock_total: 10,
@@ -37,7 +37,7 @@ export const allMateriels: (MaterielsType & { path?: string })[] = [
   {
       id: 4,
       nom: "Instruments de musique",
-      categorieId: { name: "Instrument" },
+      categorieId: { nom: "Instrument" },
       image_url: "/instruments-des-musiques.jpeg",
       prix_location: 150,
       stock_total: 15,
@@ -48,7 +48,7 @@ export const allMateriels: (MaterielsType & { path?: string })[] = [
   {
       id: 5,
       nom: "HiFi & vidéo",
-      categorieId: { name: "Multimédia" },
+      categorieId: { nom: "Multimédia" },
       image_url: "/hifi-video.jpeg",
       prix_location: 90,
       stock_total: 18,
@@ -59,7 +59,7 @@ export const allMateriels: (MaterielsType & { path?: string })[] = [
   {
       id: 6,
       nom: "Structure",
-      categorieId: { name: "Structure scène" },
+      categorieId: { nom: "Structure scène" },
       image_url: "/structure.jpeg",
       prix_location: 200,
       stock_total: 10,
@@ -70,7 +70,7 @@ export const allMateriels: (MaterielsType & { path?: string })[] = [
   {
       id: 7,
       nom: "Flight case",
-      categorieId: { name: "Transport" },
+      categorieId: { nom: "Transport" },
       image_url: "/flight-case.jpeg",
       prix_location: 110,
       stock_total: 30,
@@ -81,7 +81,7 @@ export const allMateriels: (MaterielsType & { path?: string })[] = [
   {
       id: 8,
       nom: "Microphones",
-      categorieId: { name: "Audio" },
+      categorieId: { nom: "Audio" },
       image_url: "/microphones.jpeg",
       prix_location: 70,
       stock_total: 40,
@@ -92,7 +92,7 @@ export const allMateriels: (MaterielsType & { path?: string })[] = [
   {
       id: 9,
       nom: "Enceintes",
-      categorieId: { name: "Sonorisation" },
+      categorieId: { nom: "Sonorisation" },
       image_url: "/enceinte.jpeg",
       prix_location: 130,
       stock_total: 20,
@@ -103,7 +103,7 @@ export const allMateriels: (MaterielsType & { path?: string })[] = [
   {
       id: 10,
       nom: "Consoles de mixage",
-      categorieId: { name: "Mixage" },
+      categorieId: { nom: "Mixage" },
       image_url: "/console-de-mixage.jpeg",
       prix_location: 180,
       stock_total: 12,
@@ -114,7 +114,7 @@ export const allMateriels: (MaterielsType & { path?: string })[] = [
   {
       id: 11,
       nom: "Accessoires divers",
-      categorieId: { name: "Accessoires" },
+      categorieId: { nom: "Accessoires" },
       image_url: "/accessoire-divers.jpeg",
       prix_location: 50,
       stock_total: 100,
@@ -125,7 +125,7 @@ export const allMateriels: (MaterielsType & { path?: string })[] = [
   {
       id: 12,
       nom: "Packs événementiels",
-      categorieId: { name: "Pack" },
+      categorieId: { nom: "Pack" },
       image_url: "/pack-evenementiel.jpeg",
       prix_location: 160,
       stock_total: 8,

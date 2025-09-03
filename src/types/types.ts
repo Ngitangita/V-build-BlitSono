@@ -18,7 +18,7 @@ export type MaterielsType = {
    id: number;
   nom: string;
   categorieId: {
-    name: string;
+    nom: string;
   };
   image_url: string;
   prix_location: number;
@@ -39,4 +39,7 @@ export type PackItems = {
   description: string;
   prix_location: number;
 };
+
+
+
 

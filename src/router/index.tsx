@@ -2,7 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import PublicLayout from "../components/layouts/PublicLayout";
 import ProtectedLayout from "../components/layouts/ProtectedLayout";
 import HomePage from "../pages/client/HomePage";
-// import Catalogue from "../pages/client/Catalogue";
+import Catalogue from "../pages/client/Catalogue";
 // import Basket from "../pages/client/Basket";
 // import MaterialDetail from "../pages/client/MaterialDetail";
 // import PackMateriels from "../pages/client/PackMateriels";
@@ -42,7 +42,7 @@ const router = createBrowserRouter([
     element: <PublicLayout />,
     children: [
       { index: true, element: <HomePage /> },
-    //   { path: "catalogues", element: <Catalogue /> },
+      { path: "catalogues", element: <Catalogue /> },
     //   { path: "materiel/:id", element: <MaterialDetail /> },
     //   { path: "pack-materiels", element: <PackMateriels /> },
 
