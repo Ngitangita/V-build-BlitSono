@@ -5,7 +5,7 @@ import HomePage from "../pages/client/HomePage";
 import Catalogue from "../pages/client/Catalogue";
 // import Basket from "../pages/client/Basket";
 import MaterielDetail from "../pages/client/MaterielDetail";
-// import PackMateriels from "../pages/client/PackMateriels";
+import PackMateriels from "../pages/client/PackMateriels";
 // import EspaceClient from "../pages/client/Espace-client";
 // import Devis from "../pages/client/Devis";
 // import Facture from "../pages/client/Facture";
@@ -44,7 +44,7 @@ const router = createBrowserRouter([
       { index: true, element: <HomePage /> },
       { path: "catalogues", element: <Catalogue /> },
       { path: "materiel/:id", element: <MaterielDetail /> },
-    //   { path: "pack-materiels", element: <PackMateriels /> },
+      { path: "pack-materiels", element: <PackMateriels /> },
 
     //   {
     //     element: <ProtectedClient />,

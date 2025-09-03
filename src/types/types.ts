@@ -40,6 +40,28 @@ export type PackItems = {
   prix_location: number;
 };
 
+export type PackType = {
+  id: number;
+  name: string;
+  description: string;
+  price_override: number;
+};
+export type ProductType = {
+  id: number;
+  nom: string;
+  categoryId?: { name: string };
+  image_url: string;
+  prix: number;
+  stock_total: number;
+  stock_available: number;
+  description: string;
+};
+export type PackItemsType = {
+  id: number;
+  packId: PackType;
+  productId: ProductType;
+  quantite: number;
+};
 
 
 
