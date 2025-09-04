@@ -64,7 +64,19 @@ export type PackItemsType = {
 };
 
 
-
+export type Reservation = {
+  id: string;
+  userId: number;
+  date: string;
+  heure: string;
+  dureeHeure: number;
+  materiel: string[];
+  lieu: string;
+  statut: "en_attente" | "confirmée";
+  prixEstime: number;
+  prixFinal?: number;
+  etatCommande: string;
+};
 
 
 

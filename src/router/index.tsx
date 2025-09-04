@@ -6,8 +6,8 @@ import Catalogue from "../pages/client/Catalogue";
 import Basket from "../pages/client/Basket";
 import MaterielDetail from "../pages/client/MaterielDetail";
 import PackMateriels from "../pages/client/PackMateriels";
-// import EspaceClient from "../pages/client/Espace-client";
-// import Devis from "../pages/client/Devis";
+import EspaceClient from "../pages/client/EspaceClient";
+import Devis from "../pages/client/Devis";
 // import Facture from "../pages/client/Facture";
 // import Paiement from "../pages/client/Paiement";
 import { SignIn } from "../pages/auth/SignIn";
@@ -20,7 +20,7 @@ import AdminDashboard from "../pages/admin/AdminDashboard";
 import PublicNotFound from "../pages/not-found/PublicNotFound";
 import ProtectedNotFound from "../pages/not-found/ProtectedNotFound";
 import ForbiddenPage from "../pages/not-found/ForbiddenPage";
-// import ProtectedClient from "../pages/not-found/ProtectedClient";
+import ProtectedClient from "../pages/not-found/ProtectedClient";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
@@ -46,15 +46,15 @@ const router = createBrowserRouter([
       { path: "materiel/:id", element: <MaterielDetail /> },
       { path: "pack-materiels", element: <PackMateriels /> },
 
-    //   {
-    //     element: <ProtectedClient />,
-    //     children: [
-    //       { path: "client", element: <EspaceClient /> },
-    //       { path: "devis/:id", element: <Devis /> },
+      {
+        element: <ProtectedClient />,
+        children: [
+          { path: "client", element: <EspaceClient /> },
+          { path: "devis/:id", element: <Devis /> },
     //       { path: "facture/:id", element: <Facture /> },
     //       { path: "paiement/:id", element: <Paiement /> },
-    //     ]
-    //   },
+        ]
+      },
 
       { path: "basket", element: <Basket /> },
       { path: "sign-in", element: <SignIn /> },
