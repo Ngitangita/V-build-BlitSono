@@ -8,13 +8,13 @@ import MaterielDetail from "../pages/client/MaterielDetail";
 import PackMateriels from "../pages/client/PackMateriels";
 import EspaceClient from "../pages/client/EspaceClient";
 import Devis from "../pages/client/Devis";
-// import Facture from "../pages/client/Facture";
-// import Paiement from "../pages/client/Paiement";
+import Facture from "../pages/client/Facture";
+import Paiement from "../pages/client/Paiement";
 import { SignIn } from "../pages/auth/SignIn";
 import { SignUp } from "../pages/auth/SignUp";
 import AdminDashboard from "../pages/admin/AdminDashboard";
 // import AdminCategory from "../pages/admin/AdminCategory";
-// import AdminCatalogues from "../pages/admin/AdminCatalogues";
+import AdminCatalogues from "../pages/admin/AdminCatalogues";
 // import AdminReservationDetail from "../pages/admin/AdminReservationDetail";
 // import AdminReservations from "../pages/admin/AdminReservations";
 import PublicNotFound from "../pages/not-found/PublicNotFound";
@@ -30,7 +30,7 @@ const router = createBrowserRouter([
     element: <ProtectedLayout />,
     children: [
       { index: true, element: <AdminDashboard /> },
-    //   { path: "admin-catalogues", element: <AdminCatalogues /> },
+      { path: "admin-catalogues", element: <AdminCatalogues /> },
     //   { path: "admin-category", element: <AdminCategory /> },
     //   { path: "admin-reservations", element: <AdminReservations /> },
     //   { path: "admin-reservations-detail/:id", element: <AdminReservationDetail /> },
@@ -51,8 +51,8 @@ const router = createBrowserRouter([
         children: [
           { path: "client", element: <EspaceClient /> },
           { path: "devis/:id", element: <Devis /> },
-    //       { path: "facture/:id", element: <Facture /> },
-    //       { path: "paiement/:id", element: <Paiement /> },
+          { path: "facture/:id", element: <Facture /> },
+          { path: "paiement/:id", element: <Paiement /> },
         ]
       },
 

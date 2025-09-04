@@ -15,7 +15,7 @@ export type MenuCategorie = {
 };
 
 export type MaterielsType = {
-   id: number;
+  id: number;
   nom: string;
   categorieId: {
     nom: string;
@@ -31,6 +31,7 @@ export type Category = {
   id: number;
   name: string;
 };
+
 
 
 export type PackItems = {
