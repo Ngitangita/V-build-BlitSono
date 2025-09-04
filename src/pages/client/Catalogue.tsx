@@ -72,6 +72,7 @@ export default function Catalogue() {
         name: item.nom,
         image_url: item.image_url,
         price: item.prix_location,
+        type: "materiel",
       });
       setAddedIds((prev) => new Set(prev).add(id));
 

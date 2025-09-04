@@ -3,7 +3,7 @@ import PublicLayout from "../components/layouts/PublicLayout";
 import ProtectedLayout from "../components/layouts/ProtectedLayout";
 import HomePage from "../pages/client/HomePage";
 import Catalogue from "../pages/client/Catalogue";
-// import Basket from "../pages/client/Basket";
+import Basket from "../pages/client/Basket";
 import MaterielDetail from "../pages/client/MaterielDetail";
 import PackMateriels from "../pages/client/PackMateriels";
 // import EspaceClient from "../pages/client/Espace-client";
@@ -56,7 +56,7 @@ const router = createBrowserRouter([
     //     ]
     //   },
 
-    //   { path: "basket", element: <Basket /> },
+      { path: "basket", element: <Basket /> },
       { path: "sign-in", element: <SignIn /> },
       { path: "sign-up", element: <SignUp /> },
        { path: "forbidden", element: <ForbiddenPage /> },

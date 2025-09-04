@@ -1,12 +1,6 @@
 import { create } from "zustand";
+import type { CartItem } from "../types/cart";
 
-export interface CartItem {
-  id: number;
-  name: string;
-  image_url: string;
-  price: number;
-  quantity: number;
-}
 
 interface CartState {
   items: CartItem[];
@@ -14,6 +8,7 @@ interface CartState {
   removeFromCart: (id: number) => void;
   updateQuantity: (id: number, delta: number) => void;
   totalCount: () => number;
+  clear: () => void; 
 }
 
 export const useCartStore = create<CartState>((set, get) => ({
@@ -42,4 +37,5 @@ export const useCartStore = create<CartState>((set, get) => ({
   },
   totalCount: () =>
     get().items.reduce((sum, i) => sum + i.quantity, 0),
+   clear: () => set({ items: [] }),
 }));

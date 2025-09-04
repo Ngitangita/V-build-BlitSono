@@ -74,6 +74,7 @@ export default function PackMateriels() {
           name: item.productId.nom,
           image_url: item.productId.image_url,
           price: item.productId.prix,
+          type: "pack",
         });
       });
       setAddedIds((prev) => new Set(prev).add(packId));

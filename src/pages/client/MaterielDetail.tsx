@@ -25,6 +25,7 @@ export default function MaterielDetail() {
       name: mat.nom,
       image_url: mat.image_url,
       price: mat.prix_location,
+      type: "materiel",
     });
     setAdded(true);
   };
