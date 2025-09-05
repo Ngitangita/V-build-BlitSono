@@ -79,5 +79,31 @@ export type Reservation = {
   etatCommande: string;
 };
 
+export type MaterielReserved = {
+  materiel_id: number;
+  name: string;
+  quantity: number;
+  price: number;
+};
+
+export type ReservationBase = {
+  id: number;
+  user_name: string;
+  date_evenement: string;
+  heure_evenement: string;
+  duree_heure: number;
+  lieu: string;
+  statut: "en_attente" | "validee" | "refusee" | "confirmee";
+};
+
+export type ReservationSummary = ReservationBase & {
+  materiel_list: string;
+};
+
+export type ReservationDetail = ReservationBase & {
+  user_email: string;
+  prix_estime: number;
+  reservation_materiels: MaterielReserved[];
+};
 
 
