@@ -14,12 +14,7 @@ import { useAuthStore } from "../../stores/useAuthStore";
 import type { MenuItem, SubItem } from "../../types/types";
 
 const menuItems: MenuItem[] = [
-  {
-    title: "Accueil",
-    icon: <MdOutlineHome />,
-    path: "/admin",
-    subItems: [],
-  },
+  { title: "Accueil", icon: <MdOutlineHome />, path: "/admin", subItems: [] },
   {
     title: "Admin Catalogues",
     icon: <MdLibraryBooks />,
@@ -62,8 +57,8 @@ export default function Sidebar(): JSX.Element {
     <div>
       <button
         onClick={toggleSidebar}
-        className="fixed top-1 left-48 z-50 p-3 rounded-full bg-slate-100
-         hover:bg-slate-200 text-2xl lg:hidden"
+        className="fixed left-50 z-[10000] p-3 rounded-full bg-slate-100
+         hover:bg-slate-200 text-2xl lg:hidden shadow-md"
       >
         {openSidebar ? (
           <RiCloseLine className="text-gray-500" />
@@ -71,16 +66,24 @@ export default function Sidebar(): JSX.Element {
           <MdMenu className="text-gray-500" />
         )}
       </button>
+
+      {openSidebar && (
+        <div
+          className="fixed inset-0 bg-opacity-30 z-[9998] lg:hidden"
+          onClick={closeSidebar}
+        />
+      )}
+
       <div
         className={`
           fixed inset-y-0 left-0 text-white flex flex-col p-4 pt-7
           transform transition-transform duration-300 ease-in-out
-          bg-gray-800 h-screen w-64 
+          bg-gray-800 h-screen w-64 z-[9999]
           ${openSidebar ? "translate-x-0" : "-translate-x-full"}
           lg:translate-x-0 lg:relative lg:block
         `}
       >
-        <div className="flex flex-col items-center gap-2">
+        <div className="flex flex-col items-center gap-2 pt-7 px-4">
           <img
             src="/logo-blit.png"
             alt="Logo BlitSono"
@@ -96,7 +99,11 @@ export default function Sidebar(): JSX.Element {
           </div>
         </div>
 
-        <ul className="space-y-2 flex-1 overflow-y-auto mt-10">
+        <ul
+          className="space-y-2 flex-1 mt-10 h-64 max-h-[calc(100%-80px)] 
+         transform transition-transform duration-300 ease-in-out
+          overflow-y-scroll overflow-x-hidden scrollbar-custom"
+        >
           {menuItems.map((item, i) => (
             <li key={i}>
               {item.subItems.length > 0 ? (
@@ -148,18 +155,20 @@ export default function Sidebar(): JSX.Element {
             </li>
           ))}
         </ul>
-        <div>
-            <Link
-              to="/"
-              className=" flex items-center text-amber-50 p-2 rounded-lg bg-gray-700
-           hover:bg-gray-600 cursor-pointer mt-10"
-            >
-              Espace Client
-            </Link>
+
+        <div className="px-4 space-y-3 mt-4">
+          <Link
+            to="/"
+            className="flex items-center text-amber-50 p-2 rounded-lg bg-gray-700
+            hover:bg-gray-600 cursor-pointer"
+            onClick={closeSidebar}
+          >
+            Espace Client
+          </Link>
           <button
             onClick={handleLogout}
-            className=" flex items-center text-amber-50 p-2 rounded-lg bg-gray-700
-           hover:bg-gray-600 cursor-pointer mt-10"
+            className="flex items-center text-amber-50 p-2 rounded-lg bg-gray-700
+            hover:bg-gray-600 cursor-pointer "
           >
             <MdOutlineLogin className="mr-2" />
             Se déconnecter
