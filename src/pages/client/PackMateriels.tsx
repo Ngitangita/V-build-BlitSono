@@ -184,9 +184,10 @@ export default function PackMateriels() {
 
       <div className="flex gap-6 p-4">
         <div
-          className={`fixed top-0 left-0 h-full w-3/4 max-w-xs bg-white shadow-lg transform transition-transform duration-300 z-50 ${
-            filterOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
+          className={`fixed top-0 left-0 h-full w-3/4 max-w-xs bg-white shadow-lg 
+            transform transition-transform duration-300 z-50 ${
+              filterOpen ? "translate-x-0" : "-translate-x-full"
+            }`}
         >
           <div className="p-4 overflow-y-auto">
             <FiltersPacks
@@ -213,7 +214,8 @@ export default function PackMateriels() {
           <div className="flex justify-between items-center mb-4 mt-4">
             <button
               onClick={() => setFilterOpen(true)}
-              className="flex items-center cursor-pointer gap-2 p-2 bg-[#18769C] hover:bg-[#0f5a70] rounded-md text-white"
+              className="flex items-center cursor-pointer gap-2 p-2 bg-[#18769C]
+               hover:bg-[#0f5a70] rounded-md text-white"
             >
               <MdFilterList className="w-6 h-6" /> Filtrer
             </button>
@@ -250,7 +252,7 @@ export default function PackMateriels() {
               return (
                 <div
                   key={pack.id}
-                  className=" p-3 rounded w-full space-y-3 mt-10"
+                  className="p-3 rounded w-full space-y-3 mt-10"
                 >
                   <h3 className="text-2xl font-semibold text-[#18769C]">
                     {pack.name}: {pack.price_override} Ar
@@ -261,14 +263,14 @@ export default function PackMateriels() {
                       {produits.map((item) => (
                         <div
                           key={item.productId.id}
-                          className="w-full flex items-center justify-center bg-white group p-10"
+                          className="w-full flex items-center justify-center bg-white group p-4 sm:p-6 md:p-8 lg:p-10"
                         >
                           <div className="max-w-6xl mx-auto">
-                            <div className="w-full h-auto flex flex-col lg:flex-row justify-between gap-6 items-center">
-                              <div className="group w-[400px] lg:w-[35%] h-full bg-gray-800 p-8 rounded-lg shadow-lg flex flex-col md:flex-row lg:flex-col gap-8 justify-center md:justify-start lg:justify-center">
-                                <div className="w-full h-[80%] overflow-hidden rounded-lg">
+                            <div className="w-full h-auto flex flex-col sm:flex-col md:flex-row lg:flex-row xl:flex-row 2xl:flex-row justify-between gap-4 sm:gap-6 md:gap-8 items-center">
+                              <div className="group w-full sm:w-[300px] md:w-[350px] lg:w-[400px] xl:w-[35%] 2xl:w-[30%] h-full bg-gray-800 p-4 sm:p-6 lg:p-8 rounded-lg shadow-lg flex flex-col sm:flex-row md:flex-col gap-6 justify-center">
+                                <div className="w-full overflow-hidden rounded-lg">
                                   <img
-                                    className="h-72 md:h-32 lg:h-72 rounded-lg object-cover group-hover:scale-110 duration-300 cursor-pointer"
+                                    className="h-40 sm:h-52 md:h-64 lg:h-72 xl:h-80 2xl:h-96 rounded-lg object-cover group-hover:scale-110 duration-300 cursor-pointer"
                                     src={item.productId.image_url}
                                     alt={item.productId.nom}
                                   />
@@ -277,20 +279,21 @@ export default function PackMateriels() {
                                   <p className="text-xs uppercase text-pink-500 tracking-wide mb-2">
                                     Total stock: {item.productId.stock_total}
                                   </p>
-                                  <h3 className="text-2xl font-bold text-white">
+                                  <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-white">
                                     {item.productId.nom}
                                   </h3>
-                                  <p className="text-base text-gray-400">
+                                  <p className="text-sm sm:text-base text-gray-400">
                                     {item.productId.prix} Ar
                                   </p>
-                                  <p className="text-gray-400">
+                                  <p className="text-sm sm:text-base text-gray-400">
                                     Stock disponible:{" "}
                                     {item.productId.stock_available}
                                   </p>
-                                  <div className="flex items-center justify-end">
+
+                                  <div className="flex items-center justify-end mt-2">
                                     <button
                                       onClick={() => handleAddPack(pack.id)}
-                                      className={` ${
+                                      className={`${
                                         addedIds.has(pack.id)
                                           ? "bg-green-500 hover:bg-green-600 text-white px-3 py-2"
                                           : ""
@@ -302,15 +305,14 @@ export default function PackMateriels() {
                                         <div className="flex items-center space-x-2">
                                           <span
                                             className="hidden group-hover:inline-block border border-[#18769C] text-[#18769C]
-                                        bg-white px-3 py-2 rounded-l-full 
-                                        hover:bg-[#18769C] hover:text-white text-sm transition-all duration-300
-                                          p-1.5 justify-center cursor-pointer"
+                                          bg-white px-3 py-2 rounded-l-full 
+                                          hover:bg-[#18769C] hover:text-white text-xs sm:text-sm transition-all duration-300 cursor-pointer"
                                           >
                                             Ajouter au panier
                                           </span>
                                           <span
-                                            className="text-lg pr-3 p-2.5 rounded-r-full cursor-pointer
-                                         bg-[#18769C] hover:bg-[#0f5a70] text-white transition-all duration-300 flex items-center"
+                                            className="text-base sm:text-lg pr-3 p-2.5 rounded-r-full cursor-pointer
+                                           bg-[#18769C] hover:bg-[#0f5a70] text-white transition-all duration-300 flex items-center"
                                           >
                                             <FaShoppingCart />
                                           </span>
@@ -320,26 +322,22 @@ export default function PackMateriels() {
                                   </div>
                                 </div>
                               </div>
-
-                              <div className="w-[500px] lg:w-[60%] h-full flex flex-col justify-between">
-                                <div className="w-full h-[70%] py-10 bg-gray-800 rounded-lg shadow-lg p-4 lg:p-8 flex flex-col justify-center gap-4 lg:gap-8">
-                                  <div className="flex flex-col justify-between lg:items-center py-6 border-b-2 border-gray-700">
-                                    <div>
-                                      <h3 className="text-xl lg:text-2xl font-medium tracking-wide text-[#18769C]">
-                                        <span className="text-gray-400">
-                                          {" "}
-                                          Catégorie:{" "}
-                                        </span>{" "}
-                                        {item.productId.categoryId?.name}
-                                        <span className="text-gray-400">
-                                          {" "}
-                                          - Quantité:{" "}
-                                        </span>
-                                        {item.quantite}
-                                      </h3>
-                                    </div>
+                              <div className="w-full sm:w-[400px] md:w-[450px] lg:w-[500px] xl:w-[60%] 2xl:w-[65%] h-full flex flex-col justify-between">
+                                <div className="w-full py-6 sm:py-8 lg:py-10 bg-gray-800 rounded-lg shadow-lg p-4 lg:p-8 flex flex-col justify-center gap-4 lg:gap-8">
+                                  <div className="flex flex-col lg:flex-row lg:items-center py-4 border-b-2 border-gray-700">
+                                    <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium tracking-wide text-[#18769C]">
+                                      <span className="text-gray-400">
+                                        Catégorie:{" "}
+                                      </span>
+                                      {item.productId.categoryId?.name}
+                                      <span className="text-gray-400">
+                                        {" "}
+                                        - Quantité:{" "}
+                                      </span>
+                                      {item.quantite}
+                                    </h3>
                                   </div>
-                                  <p className="text-base text-gray-400 font-medium tracking-wide leading-6">
+                                  <p className="text-sm sm:text-base text-gray-400 font-medium tracking-wide leading-6">
                                     {item.productId.description}
                                   </p>
                                 </div>
@@ -370,47 +368,67 @@ export default function PackMateriels() {
                       {pack.name}: {pack.price_override} Ar
                     </h3>
                     <p className="text-[#575756]">{pack.description}</p>
-                    <table className="w-full mt-2 border border-gray-300 rounded">
-                      <thead className="bg-gray-200">
-                        <tr>
-                          <th className="p-2 text-left">Produit</th>
-                          <th className="p-2">Prix</th>
-                          <th className="p-2">Stock total</th>
-                          <th className="p-2">Stock dispo</th>
-                          <th className="p-2">Catégorie</th>
-                          <th className="p-2">Description</th>
-                          <th className="p-2">Quantité</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {produits.map((item) => (
-                          <tr key={item.id} className="even:bg-gray-50">
-                            <td className="p-2 flex items-center gap-2">
-                              <img
-                                src={item.productId.image_url}
-                                alt={item.productId.nom}
-                                className="w-12 h-12 object-cover rounded"
-                              />
-                              {item.productId.nom}
-                            </td>
-                            <td className="p-2">{item.productId.prix} Ar</td>
-                            <td className="p-2">
-                              {item.productId.stock_total}
-                            </td>
-                            <td className="p-2">
-                              {item.productId.stock_available}
-                            </td>
-                            <td className="p-2">
-                              {item.productId.categoryId?.name}
-                            </td>
-                            <td className="p-2">
-                              {item.productId.description}
-                            </td>
-                            <td className="p-2">{item.quantite}</td>
+                    <div className="w-full mt-2 overflow-x-auto">
+                      <table className="w-full min-w-[600px] md:min-w-[700px] lg:min-w-[900px] xl:min-w-[1100px] 2xl:min-w-[1300px] border border-gray-300 rounded">
+                        <thead className="bg-gray-200">
+                          <tr>
+                            <th className="p-2 sm:p-3 md:p-4 text-left text-sm md:text-base">
+                              Produit
+                            </th>
+                            <th className="p-2 sm:p-3 md:p-4 text-sm md:text-base">
+                              Prix
+                            </th>
+                            <th className="p-2 sm:p-3 md:p-4 text-sm md:text-base">
+                              Stock total
+                            </th>
+                            <th className="p-2 sm:p-3 md:p-4 text-sm md:text-base">
+                              Stock dispo
+                            </th>
+                            <th className="p-2 sm:p-3 md:p-4 text-sm md:text-base">
+                              Catégorie
+                            </th>
+                            <th className="p-2 sm:p-3 md:p-4 text-sm md:text-base">
+                              Description
+                            </th>
+                            <th className="p-2 sm:p-3 md:p-4 text-sm md:text-base">
+                              Quantité
+                            </th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody>
+                          {produits.map((item) => (
+                            <tr key={item.id} className="even:bg-gray-50">
+                              <td className="p-2 sm:p-3 md:p-4 flex items-center gap-2 text-xs sm:text-sm md:text-base">
+                                <img
+                                  src={item.productId.image_url}
+                                  alt={item.productId.nom}
+                                  className="w-10 h-10 sm:w-12 sm:h-12 object-cover rounded"
+                                />
+                                {item.productId.nom}
+                              </td>
+                              <td className="p-2 sm:p-3 md:p-4 text-xs sm:text-sm md:text-base">
+                                {item.productId.prix} Ar
+                              </td>
+                              <td className="p-2 sm:p-3 md:p-4 text-xs sm:text-sm md:text-base">
+                                {item.productId.stock_total}
+                              </td>
+                              <td className="p-2 sm:p-3 md:p-4 text-xs sm:text-sm md:text-base">
+                                {item.productId.stock_available}
+                              </td>
+                              <td className="p-2 sm:p-3 md:p-4 text-xs sm:text-sm md:text-base">
+                                {item.productId.categoryId?.name}
+                              </td>
+                              <td className="p-2 sm:p-3 md:p-4 text-xs sm:text-sm md:text-base">
+                                {item.productId.description}
+                              </td>
+                              <td className="p-2 sm:p-3 md:p-4 text-xs sm:text-sm md:text-base">
+                                {item.quantite}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
 
                     <div className="flex items-center justify-end">
                       <button

@@ -20,13 +20,13 @@ function AuthAdmin({ children }: AuthAdminProps) {
     return <Navigate to="/forbidden" replace />;
   }
 
-  return <>{children?.(user as Admin)}</>; 
+  return <>{children?.(user as Admin)}</>;
 }
 
 const routes = {
   "/admin": "Admin Dashboard",
-  "/admin/categories": "Gestion des catégories",
-  "/admin/catalogues": "Gestion des catalogues",
+  "/admin/admin-catalogues": "Gestion des catalogues",
+  "/admin/admin-category": "Gestion des catégories ",
   "/admin/admin-reservations": "Gestion des réservations",
 } as const;
 
@@ -41,17 +41,44 @@ function ProtectedLayout() {
           <title>{title} • Mon App</title>
 
           <div className="flex h-screen overflow-hidden">
-            <Sidebar />
+            <Sidebar/>
 
             <div className="flex flex-col flex-1 overflow-y-auto">
-              <header className="bg-white shadow px-4 py-3 flex justify-between items-center">
-                <h1 className="text-xl font-semibold text-gray-800">{title}</h1>
-                <div className="text-sm text-gray-500">
+              <header
+                className="
+                  bg-white shadow 
+                  px-2 py-2 max-[479px]:text-sm
+                  sm:px-4 sm:py-3
+                  flex flex-col gap-2 items-start
+                  sm:flex-row sm:justify-between sm:items-center
+                "
+              >
+                <h1
+                  className="
+                  text-base font-semibold text-gray-800
+                  sm:text-lg md:text-xl lg:text-2xl
+                "
+                >
+                  {title}
+                </h1>
+                <div
+                  className="
+                  text-[11px] text-gray-500
+                  sm:text-xs md:text-sm lg:text-base
+                "
+                >
                   {user?.email ?? "no-email@example.com"}
                 </div>
               </header>
 
-              <main className="flex-1 p-4 bg-gray-100">
+              <main
+                className="
+                flex-1 
+                p-2 max-[479px]:p-1
+                sm:p-4 md:p-6 lg:p-8 xl:p-10
+                bg-gray-100
+              "
+              >
                 <Outlet />
               </main>
             </div>

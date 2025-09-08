@@ -36,7 +36,8 @@ export default function FiltersCategory({
   const pricesToShow = showAllPrices ? priceRanges : priceRanges.slice(0, 3);
 
   return (
-    <aside className="w-64 p-4 pb-16 bg-white text-[#575756] rounded-lg max-h-[calc(100vh-2rem)] overflow-y-auto">
+    <aside className="w-46 p-4 pb-16 lg:w-64 bg-white text-[#575756] 
+    rounded-lg max-h-[calc(100vh-2rem)] overflow-y-auto">
       <h2 className="font-bold text-lg mb-4">Filtres</h2>
 
       <button
@@ -46,7 +47,6 @@ export default function FiltersCategory({
         Effacer les filtres
       </button>
 
-      {/* Catégories */}
       <div className="mb-4">
         <h3 className="font-semibold mb-2">Catégorie</h3>
         {catsToShow.map(name => (
@@ -70,7 +70,6 @@ export default function FiltersCategory({
         )}
       </div>
 
-      {/* Prix */}
       <div>
         <h3 className="font-semibold mb-2">Prix</h3>
         {pricesToShow.map(pr => (

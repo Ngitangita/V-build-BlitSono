@@ -126,9 +126,10 @@ export default function Catalogue() {
         </div>
       </section>
 
-      <div className="flex flex-col md:flex-row mt-4 p-5">
+      <div className="flex flex-col md:flex-row p-5">
         <button
-          className={`sm:hidden text-2xl mb-4 focus:outline-none cursor-pointer flex items-center gap-2 p-2 rounded-md text-white ${
+          className={`sm:hidden text-2xl mb-4 focus:outline-none cursor-pointer 
+            flex items-center gap-2 p-2 rounded-md text-white ${
             open
               ? "bg-transparent text-black"
               : "bg-[#18769C] hover:bg-[#0f5a70]"
@@ -177,7 +178,7 @@ export default function Catalogue() {
         )}
 
         <div className="flex-1">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center sm:justify-end mb-4">
             <div className="flex flex-row gap-2">
               <button
                 onClick={() => setIsGrid(true)}
@@ -206,7 +207,7 @@ export default function Catalogue() {
           <div
             className={
               isGrid
-                ? "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+                ? "grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
                 : "gap-4 grid grid-cols-1 sm:grid-cols-2"
             }
           >
@@ -218,11 +219,11 @@ export default function Catalogue() {
                   key={m.id}
                   className={`
                   group transition duration-300 rounded p-3 relative hover:scale-105
-                   hover:bg-white
+                   hover:bg-white h-auto 
                   ${
                     isGrid
                       ? "flex flex-col items-center"
-                      : "flex items-center gap-4"
+                      : "flex flex-col items-center gap-4 sm:flex-row"
                   }
                 `}
                 >
@@ -230,15 +231,15 @@ export default function Catalogue() {
                     src={m.image_url}
                     alt={m.nom}
                     className={`rounded object-cover flex-shrink-0 ${
-                      isGrid ? "w-40 h-24" : "w-20 h-14"
+                      isGrid ? "sm:w-40 sm:h-24" : "sm:w-20 sm:h-14"
                     }`}
                   />
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 flex-1">
+                  <div className="flex flex-col sm:items-center gap-2 flex-1">
                     <h3 className="font-semibold text-[#1E2939] group-hover:text-[#18769C]">
-                      {m.nom}
+                      {m.nom},
                     </h3>
                     <p className="font-semibold text-[#1E2939] group-hover:text-[#18769C]">
-                      - {m.prix_location} Ar
+                      {m.prix_location} Ar
                     </p>
                   </div>
                   <div

@@ -12,7 +12,6 @@ import {
   FaCreditCard,
 } from "react-icons/fa";
 
-
 export default function EspaceClient() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
 
@@ -40,7 +39,6 @@ export default function EspaceClient() {
 
   return (
     <div className="text-[#575756]">
-      {/* Section header */}
       <section className="bgImageReservation">
         <div className="bg-gradient-to-r from-[#1E2939]/85 via-[#1E2939]/65 to-[#1E2939] text-white w-full flex flex-col px-4 py-8 pl-20 pt-20">
           <h1 className="text-3xl max-w-full sm:max-w-lg lg:max-w-xl xl:max-w-2xl font-extrabold mb-4 flex gap-2">
@@ -48,9 +46,9 @@ export default function EspaceClient() {
             Mes Réservations
           </h1>
           <p className="w-full sm:w-[500px] text-lg italic mb-6 text-start flex items-center border-l-4 border-[#18769C] pl-4">
-            Avec BlitSono, réservez simplement le matériel qu’il vous faut en
+            Avec BlitSono, réservez simplement le matériel qu'il vous faut en
             quelques clics ! Découvrez nos packs professionnels adaptés à tous
-            types d’événements, du matériel audio et lumière fiable et de
+            types d'événements, du matériel audio et lumière fiable et de
             qualité. Votre événement mérite le meilleur, réservez avec
             confiance.
           </p>
@@ -108,7 +106,7 @@ export default function EspaceClient() {
                   ].map((h) => (
                     <th
                       key={h}
-                      className="p-2 text-center text-sm sm:text-base lg:text-lg whitespace-normal md:whitespace-nowrap"
+                      className="p-2 sm:p-3 md:p-4 text-center text-xs sm:text-sm md:text-base lg:text-lg font-medium whitespace-normal md:whitespace-nowrap"
                     >
                       {h}
                     </th>
@@ -118,23 +116,24 @@ export default function EspaceClient() {
               <tbody>
                 {reservations.map((r) => (
                   <tr key={r.id} className="even:bg-gray-50 text-center">
-                    <td className="p-2 sm:p-3 text-sm sm:text-base">
+                 
+                    <td className="p-2 sm:p-3 md:p-4 text-xs sm:text-sm md:text-base">
                       {r.date}
                     </td>
-                    <td className="p-2 sm:p-3 text-sm sm:text-base">
+                    <td className="p-2 sm:p-3 md:p-4 text-xs sm:text-sm md:text-base">
                       {r.heure}
                     </td>
-                    <td className="p-2 sm:p-3 text-sm sm:text-base">
+                    <td className="p-2 sm:p-3 md:p-4 text-xs sm:text-sm md:text-base">
                       {r.dureeHeure} h
                     </td>
-                    <td className="p-2 sm:p-3 text-sm sm:text-base w-40 md:w-60 lg:w-72 overflow-hidden">
+                    <td className="p-2 sm:p-3 md:p-4 text-xs sm:text-sm md:text-base w-32 sm:w-40 md:w-56 lg:w-72 xl:w-80 2xl:w-96 overflow-hidden text-ellipsis">
                       {joinAndTruncate(r.materiel)}
                     </td>
-                    <td className="p-2 sm:p-3 text-sm sm:text-base">
+                    <td className="p-2 sm:p-3 md:p-4 text-xs sm:text-sm md:text-base">
                       {r.lieu}
                     </td>
                     <td
-                      className={`p-2 sm:p-3 font-semibold text-sm sm:text-base ${
+                      className={`p-2 sm:p-3 md:p-4 font-semibold text-xs sm:text-sm md:text-base ${
                         r.statut === "confirmée"
                           ? "text-green-600"
                           : "text-yellow-600"
@@ -143,33 +142,42 @@ export default function EspaceClient() {
                       {getReservationIcon(r.statut)}
                       <span className="ml-1">{r.statut}</span>
                     </td>
-                    <td className="p-2 sm:p-3 text-sm sm:text-base">
+                    <td className="p-2 sm:p-3 md:p-4 text-xs sm:text-sm md:text-base">
                       {r.prixEstime.toLocaleString()} Ar
                     </td>
-                    <td className="p-2 sm:p-3 text-sm sm:text-base">
+                    <td className="p-2 sm:p-3 md:p-4 text-xs sm:text-sm md:text-base">
                       {r.prixFinal ? `${r.prixFinal.toLocaleString()} Ar` : "—"}
                     </td>
-                    <td className="p-2 sm:p-3 flex justify-center space-x-2">
+                    <td className="p-2 sm:p-3 md:p-4 flex justify-center space-x-1 sm:space-x-2">
                       <Link
                         to={`/devis/${r.id}`}
-                        className="p-2 text-white rounded bg-[#18769C] hover:bg-[#0f5a70]"
+                        className="p-1.5 sm:p-2 text-white rounded bg-[#18769C] hover:bg-[#0f5a70]"
                         title="Voir Devis"
                       >
-                        <FaCalendarAlt size={20} />
+                        <FaCalendarAlt
+                          size={16}
+                          className="sm:size-18 md:size-20"
+                        />
                       </Link>
                       <Link
                         to={`/facture/${r.id}`}
-                        className="p-2 text-white rounded bg-[#18769C] hover:bg-[#0f5a70]"
+                        className="p-1.5 sm:p-2 text-white rounded bg-[#18769C] hover:bg-[#0f5a70]"
                         title="Voir Facture"
                       >
-                        <FaFileAlt size={20} />
+                        <FaFileAlt
+                          size={16}
+                          className="sm:size-18 md:size-20"
+                        />
                       </Link>
                       <Link
                         to={`/paiement/${r.id}`}
-                        className="p-2 text-white rounded bg-[#18769C] hover:bg-[#0f5a70]"
+                        className="p-1.5 sm:p-2 text-white rounded bg-[#18769C] hover:bg-[#0f5a70]"
                         title="Voir Paiement"
                       >
-                        <FaCreditCard size={20} />
+                        <FaCreditCard
+                          size={16}
+                          className="sm:size-18 md:size-20"
+                        />
                       </Link>
                     </td>
                   </tr>

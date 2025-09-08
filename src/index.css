@@ -13,6 +13,13 @@
   --scroll-thumb-hover: rgba(255,255,255,0.18);
 }
 
+body{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
 html {
   scroll-behavior: smooth;
   font-size: 90.5%;

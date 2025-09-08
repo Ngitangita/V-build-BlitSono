@@ -72,7 +72,9 @@ function AdminCategory() {
 
   const handleEditSave = async () => {
     if (!toEdit) return;
-    await axiosClient.put(`/api/categories/${toEdit.id}`, { name: toEdit.name });
+    await axiosClient.put(`/api/categories/${toEdit.id}`, {
+      name: toEdit.name,
+    });
     setIsEditOpen(false);
     fetchCategories();
   };
@@ -123,54 +125,56 @@ function AdminCategory() {
           />
         </div>
 
-        <table className="min-w-full bg-white shadow-md rounded-lg mt-[100px]">
-          <thead>
-            <tr className="bg-gray-200">
-              <th className="py-2 px-4">Nom</th>
-              <th className="py-2 px-4">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {categories.length ? (
-              categories
-                .filter((c) =>
-                  c.name.toLowerCase().includes(searchTerm.toLowerCase())
-                )
-                .sort((a, b) => b.id - a.id)
-                .map((c) => (
-                  <tr
-                    key={c.id}
-                    className="text-center border-y hover:bg-gray-100"
-                  >
-                    <td className="py-3 px-4">{c.name}</td>
-                    <td className="py-3 px-4 flex justify-center gap-2">
-                      <button
-                        onClick={() => openEdit(c)}
-                        className="inline-block p-2 bg-[#18769C] hover:bg-[#0f5a70] text-white font-medium rounded transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#18769C]/50 cursor-pointer"
-                      >
-                        <FaRegEdit />
-                      </button>
-                      <button
-                        onClick={() => openDelete(c)}
-                        className="bg-red-500 text-white p-2 rounded hover:bg-red-600 cursor-pointer"
-                      >
-                        <MdDelete />
-                      </button>
-                    </td>
-                  </tr>
-                ))
-            ) : (
-              <tr>
-                <td colSpan={2} className="py-4 text-center">
-                  <div className="flex flex-col items-center">
-                    <MdInfoOutline className="text-4xl text-gray-400" />
-                    <span>Aucune catégorie trouvée</span>
-                  </div>
-                </td>
+        <div className="w-full max-[479px]:overflow-x-auto">
+          <table className="min-w-full bg-white shadow-md rounded-lg mt-[100px]">
+            <thead>
+              <tr className="bg-gray-200">
+                <th className="py-2 px-4">Nom</th>
+                <th className="py-2 px-4">Actions</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {categories.length ? (
+                categories
+                  .filter((c) =>
+                    c.name.toLowerCase().includes(searchTerm.toLowerCase())
+                  )
+                  .sort((a, b) => b.id - a.id)
+                  .map((c) => (
+                    <tr
+                      key={c.id}
+                      className="text-center border-y hover:bg-gray-100"
+                    >
+                      <td className="py-3 px-4">{c.name}</td>
+                      <td className="py-3 px-4 flex justify-center gap-2">
+                        <button
+                          onClick={() => openEdit(c)}
+                          className="inline-block p-2 bg-[#18769C] hover:bg-[#0f5a70] text-white font-medium rounded transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#18769C]/50 cursor-pointer"
+                        >
+                          <FaRegEdit />
+                        </button>
+                        <button
+                          onClick={() => openDelete(c)}
+                          className="bg-red-500 text-white p-2 rounded hover:bg-red-600 cursor-pointer"
+                        >
+                          <MdDelete />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+              ) : (
+                <tr>
+                  <td colSpan={2} className="py-4 text-center">
+                    <div className="flex flex-col items-center">
+                      <MdInfoOutline className="text-4xl text-gray-400" />
+                      <span>Aucune catégorie trouvée</span>
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
       {isCreateOpen && (
         <div

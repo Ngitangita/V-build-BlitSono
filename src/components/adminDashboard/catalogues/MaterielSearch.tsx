@@ -57,7 +57,10 @@ const MaterielSearch = ({
         onChange={(e) => setSearchPrix(e.target.value)}
         variant="outlined"
         size="small"
-        sx={{ ...textFieldSx, width: "120px" }}
+        sx={{ ...textFieldSx,  width: {
+            xs: "200px",
+            sm: "120px",
+          }, }}
       />
       <TextField
         label="Stock total"
@@ -66,7 +69,10 @@ const MaterielSearch = ({
         onChange={(e) => setSearchStockTotal(e.target.value)}
         variant="outlined"
         size="small"
-        sx={{ ...textFieldSx, width: "120px" }}
+          sx={{ ...textFieldSx,  width: {
+            xs: "200px",
+            sm: "120px",
+          }, }}
       />
       <TextField
         label="Stock dispo"
@@ -75,7 +81,10 @@ const MaterielSearch = ({
         onChange={(e) => setSearchStockAvailable(e.target.value)}
         variant="outlined"
         size="small"
-        sx={{ ...textFieldSx, width: "120px" }}
+          sx={{ ...textFieldSx,  width: {
+            xs: "200px",
+            sm: "120px",
+          }, }}
       />
       <TextField
         label="Catégorie"

@@ -110,70 +110,70 @@ function AdminCatalogues() {
           setSearchCategorie={setSearchCategorie}
         />
       </div>
-
-      <table className="min-w-full bg-white shadow-lg rounded">
-        <thead>
-          <tr className="bg-gray-200">
-            <th className="px-4 py-2">Nom</th>
-            <th className="px-4 py-2">Catégorie</th>
-            <th className="px-4 py-2">Image</th>
-            <th className="px-4 py-2">Prix loc.</th>
-            <th className="px-4 py-2">Stock total</th>
-            <th className="px-4 py-2">Stock disponible</th>
-            <th className="px-4 py-2">Description</th>
-            <th className="px-4 py-2">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filtered.length > 0 ? (
-            filtered.map((m) => (
-              <tr key={m.id} className="border-t">
-                <td className="px-4 py-2">{m.nom}</td>
-                <td className="px-4 py-2">{m.categorieId.nom}</td>
-                <td className="px-4 py-2">
-                  {m.image_url ? (
-                    <img
-                      src={m.image_url}
-                      alt={m.nom}
-                      className="w-16 h-16 object-cover rounded"
-                    />
-                  ) : (
-                    "Aucune"
-                  )}
-                </td>
-                <td className="px-4 py-2">{m.prix_location.toFixed(2)}</td>
-                <td className="px-4 py-2">{m.stock_total}</td>
-                <td className="px-4 py-2">{m.stock_available}</td>
-                <td className="px-4 py-2">{m.description}</td>
-                <td className="px-4 py-2 flex gap-2 justify-center">
-                  <button
-                    onClick={() => openForm(m)}
-                    className="inline-block px-4 py-2 bg-[#18769C] hover:bg-[#0f5a70] text-white font-medium rounded transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#18769C]/50 cursor-pointer"
-                  >
-                    <FaRegEdit />
-                  </button>
-                  <button
-                    onClick={() => confirmDelete(m)}
-                    className="inline-block px-4 py-2 bg-[#e3342f] hover:bg-[#cc1f1a] text-white font-medium rounded transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 cursor-pointer"
-                  >
-                    <MdDelete />
-                  </button>
+      <div className="w-full max-[479px]:overflow-x-auto">
+        <table className="min-w-full bg-white shadow-lg rounded">
+          <thead>
+            <tr className="bg-gray-200">
+              <th className="px-4 py-2">Nom</th>
+              <th className="px-4 py-2">Catégorie</th>
+              <th className="px-4 py-2">Image</th>
+              <th className="px-4 py-2">Prix loc.</th>
+              <th className="px-4 py-2">Stock total</th>
+              <th className="px-4 py-2">Stock disponible</th>
+              <th className="px-4 py-2">Description</th>
+              <th className="px-4 py-2">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.length > 0 ? (
+              filtered.map((m) => (
+                <tr key={m.id} className="border-t">
+                  <td className="px-4 py-2">{m.nom}</td>
+                  <td className="px-4 py-2">{m.categorieId.nom}</td>
+                  <td className="px-4 py-2">
+                    {m.image_url ? (
+                      <img
+                        src={m.image_url}
+                        alt={m.nom}
+                        className="w-16 h-16 object-cover rounded"
+                      />
+                    ) : (
+                      "Aucune"
+                    )}
+                  </td>
+                  <td className="px-4 py-2">{m.prix_location.toFixed(2)}</td>
+                  <td className="px-4 py-2">{m.stock_total}</td>
+                  <td className="px-4 py-2">{m.stock_available}</td>
+                  <td className="px-4 py-2">{m.description}</td>
+                  <td className="px-4 py-2 flex gap-2 justify-center">
+                    <button
+                      onClick={() => openForm(m)}
+                      className="inline-block px-4 py-2 bg-[#18769C] hover:bg-[#0f5a70] text-white font-medium rounded transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#18769C]/50 cursor-pointer"
+                    >
+                      <FaRegEdit />
+                    </button>
+                    <button
+                      onClick={() => confirmDelete(m)}
+                      className="inline-block px-4 py-2 bg-[#e3342f] hover:bg-[#cc1f1a] text-white font-medium rounded transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 cursor-pointer"
+                    >
+                      <MdDelete />
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={8} className="py-4 text-center">
+                  <div className="flex flex-col items-center">
+                    <MdInfoOutline className="text-4xl text-gray-400" />
+                    <span>Aucun matériel trouvé</span>
+                  </div>
                 </td>
               </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan={8} className="py-4 text-center">
-                <div className="flex flex-col items-center">
-                  <MdInfoOutline className="text-4xl text-gray-400" />
-                  <span>Aucun matériel trouvé</span>
-                </div>
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-
+            )}
+          </tbody>
+        </table>
+      </div>
       {showForm && (
         <MaterielForm
           materiel={current}
