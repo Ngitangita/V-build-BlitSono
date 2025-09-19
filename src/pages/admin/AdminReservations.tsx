@@ -76,6 +76,7 @@ export default function AdminReservations() {
 
   return (
     <div className="p-6">
+       <title>Réservations | BlitSono</title>
       <h1 className="text-3xl font-bold mb-6 text-[#18769C]">
         Gestion des Réservations
       </h1>

@@ -32,7 +32,7 @@ function AdminCategory() {
       const { data } = await axiosClient.get<{
         categories?: Category[];
         data?: Category[];
-      }>("/api/categories");
+      }>("/categories");
       const list = Array.isArray(data)
         ? data
         : Array.isArray(data.categories)
@@ -64,15 +64,20 @@ function AdminCategory() {
   };
 
   const handleDelete = async () => {
-    if (!toDelete) return;
-    await axiosClient.delete(`/api/categories/${toDelete.id}`);
+  if (!toDelete) return;
+  try {
+    await axiosClient.delete(`/categories/${toDelete.id_category}`);
     setIsDeleteOpen(false);
     fetchCategories();
-  };
+  } catch (err) {
+    console.error("Erreur lors de la suppression :", err);
+  }
+};
+
 
   const handleEditSave = async () => {
     if (!toEdit) return;
-    await axiosClient.put(`/api/categories/${toEdit.id}`, {
+    await axiosClient.put(`/categories/${toEdit.id_category}`, {
       name: toEdit.name,
     });
     setIsEditOpen(false);
@@ -81,7 +86,7 @@ function AdminCategory() {
 
   return (
     <>
-      <title>BlitSono • Catégories Sono Pro</title>
+      <title>Catégories Sono Pro | BlitSono</title>
 
       <div className="container border border-gray-50">
         <div className="flex items-center gap-4 p-4 w-[1015px] fixed bg-white z-50">
@@ -139,11 +144,11 @@ function AdminCategory() {
                   .filter((c) =>
                     c.name.toLowerCase().includes(searchTerm.toLowerCase())
                   )
-                  .sort((a, b) => b.id - a.id)
-                  .map((c) => (
+                  .sort((a, b) => b.id_category - a.id_category)
+                  .map((c, i) => (
                     <tr
-                      key={c.id}
-                      className="text-center border-y hover:bg-gray-100"
+                      key={c.id_category ?? `cat-${i}`}
+                      className="text-center hover:bg-gray-100 even:bg-gray-50"
                     >
                       <td className="py-3 px-4">{c.name}</td>
                       <td className="py-3 px-4 flex justify-center gap-2">
@@ -212,7 +217,7 @@ function AdminCategory() {
         >
           <div className="bg-white rounded-lg shadow-lg w-[90%] sm:w-[400px] p-6">
             <p className="mb-6">
-              Supprimer la catégorie <strong>{toDelete.name}</strong> ?
+              Voullez-vous vraiment supprimer la catégorie <strong>{toDelete.name}</strong> ?
             </p>
             <div className="flex justify-between">
               <button

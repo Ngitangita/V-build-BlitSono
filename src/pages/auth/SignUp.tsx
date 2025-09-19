@@ -64,42 +64,43 @@ export const SignUp = () => {
   };
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
-    startTransition(() => {
-      setLoading(true);
+  startTransition(() => {
+    setLoading(true);
 
-      const maxLoadingTimer = setTimeout(() => setLoading(false), 5000);
+    const maxLoadingTimer = setTimeout(() => setLoading(false), 5000);
 
-      execute(
-        () =>
-          signup({
-            nom: data.nom,
-            prenom: data.prenom,
-            email: data.email,
-            mot_de_passe: data.mot_de_passe,
-            mot_de_passe_confirmation: data.confirm,
-            telephone: data.telephone,
-            role: "client",
-          }),
-        {
-          onSuccess: (res) => {
-            setToken(res.token);
-            setUser(res.user);
-            setIsAuthenticated(true);
-            toast.success("Inscription réussie !");
-            navigate(res.user.role === "client" ? "/" : "/admin", { replace: true });
-          },
-          onError: (err) => {
-            console.error("Erreur d'inscription :", err);
-            toast.error("Échec de l'inscription. Vérifiez vos informations.");
-          },
-          onFinally: () => {
-            clearTimeout(maxLoadingTimer);
-            setLoading(false);
-          },
-        }
-      );
-    });
-  };
+    execute(
+      () =>
+        signup({
+          first_name: data.prenom,
+          last_name: data.nom,
+          email: data.email,
+          password: data.mot_de_passe,
+          password_confirmation: data.confirm,
+          phone: data.telephone,
+          id_role: 1, 
+        }),
+      {
+        onSuccess: (res) => {
+          setToken(res.token);
+          setUser(res.user);
+          setIsAuthenticated(true);
+          toast.success("Inscription réussie !");
+          navigate(res.user.id_role === 1 ? "/" : "/admin", { replace: true });
+        },
+        onError: (err) => {
+          console.error("Erreur d'inscription :", err);
+          toast.error("Échec de l'inscription. Vérifiez vos informations.");
+        },
+        onFinally: () => {
+          clearTimeout(maxLoadingTimer);
+          setLoading(false);
+        },
+      }
+    );
+  });
+};
+
 
   return (
     <>

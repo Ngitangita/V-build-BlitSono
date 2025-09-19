@@ -162,7 +162,7 @@ export default function Packs({
           {packItems.map((m) => (
             <div key={m.id} className="px-1 sm:px-2">
               <Link
-                to={`/pack-detail/${m.id}`}
+                to="/pack-materiels"
                 className="block w-full h-full"
               >
                 <div

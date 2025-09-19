@@ -16,7 +16,7 @@ function AuthAdmin({ children }: AuthAdminProps) {
     return <Navigate to="/sign-in" replace />;
   }
 
-  if (user?.role !== "admin") {
+  if (user?.id_role !== 2) {
     return <Navigate to="/forbidden" replace />;
   }
 
@@ -75,7 +75,7 @@ function ProtectedLayout() {
                 className="
                 flex-1 
                 p-2 max-[479px]:p-1
-                sm:p-4 md:p-6 lg:p-8 xl:p-10
+                sm:p-4 md:p-3 lg:p-4 xl:p-5
                 bg-gray-100
               "
               >

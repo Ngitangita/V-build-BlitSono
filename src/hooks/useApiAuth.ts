@@ -7,10 +7,10 @@ export function useApiAuth() {
     return data;
   };
 
-  const signin = async (email: string, mot_de_passe: string) => {
+  const signin = async (email: string, password: string) => {
     const { data } = await axiosClient.post<SigninResponse>("/login", {
       email,
-      mot_de_passe,
+      password,
     });
     return data;
   };

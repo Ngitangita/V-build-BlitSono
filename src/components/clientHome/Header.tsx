@@ -77,7 +77,7 @@ export default function Header(){
               )
             )}
           </nav>
-          {user?.role === "admin" && (
+          {user?.id_role == 2 && (
             <li className="bg-white text-[#18769C] inline-block p-1 rounded">
               <Link to="/admin">Admin</Link>
             </li>

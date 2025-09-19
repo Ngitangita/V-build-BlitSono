@@ -59,6 +59,7 @@ export default function AdminReservationDetail() {
 
   return (
     <div className="p-6">
+      <title>Détails de la réservation | BlitSono</title>
       <Link to="/admin" className="text-[#18769C] hover:underline">
         ← Retour
       </Link>

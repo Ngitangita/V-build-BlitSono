@@ -13,7 +13,7 @@ export type BasketFormProps = {
   total: number;
   remove: (id: number) => void;
   updateQuantity: (id: number, quantity: number) => void;
-}
+};
 
 export type UnavailableItem = {
   id: number;
@@ -36,7 +36,7 @@ export default function BasketForm({
   const currentUser = useAuthStore((s) => s.user) as User | null;
   const isAuthenticated = !!currentUser;
   const navigate = useNavigate();
-
+  const totalItems = useCartStore((s) => s.totalCount());
   const [eventDate, setEventDate] = useState("");
   const [eventTime, setEventTime] = useState("");
   const [location, setLocation] = useState("");
@@ -345,7 +345,10 @@ export default function BasketForm({
           </div>
         ))}
 
-        <div className="text-right font-bold text-xl">Total : {total} Ar</div>
+        <div className="text-right font-bold text-xl">
+          Total à payer : {total} Ar ({totalItems} produit
+          {totalItems > 1 ? "s" : ""})
+        </div>
       </div>
 
       <button

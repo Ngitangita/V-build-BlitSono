@@ -1,5 +1,6 @@
 import React from "react";
-import { FaVolumeUp, FaHeadphones, FaPhone } from "react-icons/fa";
+import { FaVolumeUp, FaHeadphones } from "react-icons/fa";
+import ContactButton from './ContactButton';
 
 const WelcomeBlitSono: React.FC = () => {
   return (
@@ -35,20 +36,13 @@ const WelcomeBlitSono: React.FC = () => {
         <div className="flex flex-col sm:flex-row flex-wrap gap-4">
           <a
             href="/catalogues"
-            className="inline-flex items-center justify-center gap-2 bg-white text-[#18769C] font-semibold px-6 py-3 rounded-lg hover:bg-gray-100 transition"
+            className="inline-flex items-center justify-center gap-2 bg-white text-[#18769C] 
+            font-semibold px-6 py-3 rounded-lg hover:bg-gray-100 transition"
             role="button"
           >
             <FaHeadphones /> Explorer notre catalogue
           </a>
-          <a
-            href="https://www.facebook.com/blit.sono"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 bg-[#145e7a] text-white px-6 py-3 rounded-lg hover:bg-[#0f4a63] transition"
-            role="button"
-          >
-            <FaPhone /> Nous contacter sur MP
-          </a>
+            <ContactButton />
         </div>
       </div>
     </section>

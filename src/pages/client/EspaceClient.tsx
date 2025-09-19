@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import axiosClient from "../../conf/axiosClient";
 import type { Reservation } from "../../types/types";
 import { Link } from "react-router-dom";
+import ContactButton from './../../components/clientHome/ContactButton';
 import {
   FaCalendarCheck,
-  FaPhone,
   FaHeadphones,
   FaCalendarAlt,
   FaThumbsUp,
@@ -39,6 +39,7 @@ export default function EspaceClient() {
 
   return (
     <div className="text-[#575756]">
+      <title>Espace Client | Blit Sono</title>
       <section className="bgImageReservation">
         <div className="bg-gradient-to-r from-[#1E2939]/85 via-[#1E2939]/65 to-[#1E2939] text-white w-full flex flex-col px-4 py-8 pl-20 pt-20">
           <h1 className="text-3xl max-w-full sm:max-w-lg lg:max-w-xl xl:max-w-2xl font-extrabold mb-4 flex gap-2">
@@ -59,14 +60,7 @@ export default function EspaceClient() {
             >
               <FaHeadphones /> Explorer notre catalogue
             </Link>
-            <Link
-              to="https://www.facebook.com/blit.sono"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-[#145e7a] text-white px-6 py-3 rounded-lg hover:bg-[#0f4a63] transition"
-            >
-              <FaPhone /> Contactez-nous sur MP
-            </Link>
+            <ContactButton />
           </div>
         </div>
       </section>
@@ -81,12 +75,7 @@ export default function EspaceClient() {
               Qu'attendez-vous ? Parcourez notre catalogue et réservez votre
               matériel dès maintenant !
             </p>
-            <Link
-              to="/catalogues"
-              className="mt-4 inline-block px-6 py-3 bg-[#18769C] text-white rounded hover:bg-[#0f5a70]"
-            >
-              Explorer le catalogue
-            </Link>
+            <ContactButton />
           </div>
         ) : (
           <div className="overflow-x-auto min-w-0">

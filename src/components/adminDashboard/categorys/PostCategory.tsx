@@ -15,7 +15,7 @@ function PostCategory({ onClose, onCategoryCreated }: Props) {
 
   const onSubmit = async (data: FormData) => {
     try {
-      await axiosClient.post("/api/categories", data);
+      await axiosClient.post("/categories", data);
       onCategoryCreated();
       onClose();
     } catch (err) {

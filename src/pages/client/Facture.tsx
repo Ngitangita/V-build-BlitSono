@@ -2,11 +2,11 @@ import { Link } from "react-router-dom";
 import {
   FaCalendarCheck,
   FaHeadphones,
-  FaPhone,
   FaThumbsUp,
 } from "react-icons/fa";
 import { factureStatique } from "../../data/FactureData";
 import type { LigneFacture } from "../../types/factureTypes";
+import ContactButton from './../../components/clientHome/ContactButton';
 
 export default function Facture() {
   const f = factureStatique;
@@ -43,14 +43,7 @@ export default function Facture() {
             >
               <FaHeadphones /> Explorer notre catalogue
             </Link>
-            <Link
-              to="https://www.facebook.com/blit.sono"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-[#145e7a] text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-[#0f4a63] transition"
-            >
-              <FaPhone /> Contactez-nous sur MP
-            </Link>
+            <ContactButton />
           </div>
         </div>
       </section>

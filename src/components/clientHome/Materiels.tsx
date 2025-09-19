@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { FaThumbsUp, FaHandPointRight } from "react-icons/fa";
 import { allMateriels } from "../../data/allMateriels";
-
+import { motion } from "framer-motion";
 
 export default function Materiels() {
   return (
@@ -29,8 +29,16 @@ export default function Materiels() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
         {allMateriels.slice(0, 9).map((m, i) => (
-          <Link key={i} to={`/materiel/${m.id}`} className="group">
-            <div className="p-4 flex flex-col items-center gap-3 transform transition duration-300 group-hover:scale-105">
+          <motion.div
+                  key={i}
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.3 }}
+                  className="
+              group rounded hover:bg-white
+              "
+                >
+          <Link to={`/materiel/${m.id}`}>
+            <div className="p-4 flex flex-col items-center gap-3 transform transition duration-300 ">
               <img
                 src={m.image_url}
                 alt={m.nom}
@@ -41,6 +49,7 @@ export default function Materiels() {
               </h3>
             </div>
           </Link>
+          </motion.div>
         ))}
       </div>
 

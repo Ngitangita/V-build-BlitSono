@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useCartStore } from "../../stores/useCartStore";
-import { FaHeadphones, FaPhone, FaThumbsUp } from "react-icons/fa";
+import { FaHeadphones, FaThumbsUp } from "react-icons/fa";
 import { allMateriels } from "../../data/allMateriels";
+import ContactButton from './../../components/clientHome/ContactButton';
 
 
 export default function MaterielDetail() {
@@ -63,14 +64,7 @@ export default function MaterielDetail() {
             >
               <FaHeadphones /> Explorer notre catalogue
             </Link>
-            <Link
-              to="https://www.facebook.com/blit.sono"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-[#145e7a] text-white px-6 py-3 rounded-lg hover:bg-[#0f4a63] transition"
-            >
-              <FaPhone /> Contactez-nous sur MP
-            </Link>
+              <ContactButton />
           </div>
         </div>
       </section>

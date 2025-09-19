@@ -1,4 +1,3 @@
-import React from "react";
 import { Navigate } from "react-router-dom";
 import type { Admin, Client, UserRole } from "../types/user";
 
@@ -18,7 +17,7 @@ function withPermission<P extends object>(
   const WithPermissionWrapper = (props: P & WithPermissionProps) => {
     const { user, ...restProps } = props;
 
-    if (!user || !allowedRoles.includes(user.role)) {
+    if (!user || !allowedRoles.includes(user.id_role)) {
       return <Navigate to={callbackUrl} replace />;
     }
 

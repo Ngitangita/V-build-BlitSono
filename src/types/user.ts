@@ -13,15 +13,20 @@ export type LoginValues = {
   mot_de_passe: string;
 };
 
-export type UserType = {
-  nom: string;
-  prenom: string;
+
+export type UserType ={
+  id_user: number;
+  first_name: string;
+  last_name: string;
   email: string;
-  mot_de_passe: string;
-  telephone?: string;
-  role: "admin" | "client"; 
-  date_inscription: string;
-};
+  address: string | null;
+  phone: string | null;
+  id_role: number; 
+  registration_date: string; 
+  created_at: string | null;
+  updated_at: string | null;
+}
+
 
 export type SigninResponse = {
   token: string;
@@ -29,26 +34,27 @@ export type SigninResponse = {
 };
 
 export type SignupParams = {
-  nom: string;
-  prenom: string;
+  first_name: string;
+  last_name: string;
   email: string;
-  mot_de_passe: string;
-  mot_de_passe_confirmation: string;
-  telephone?: string;
-  role: "admin" | "client";
+  password: string;
+  password_confirmation: string;
+  phone?: string;
+  id_role?: number; 
 };
 
-export type Admin = UserType & { role: "admin" };
-export type Client = UserType & { role: "client" };
 
-export type UserRole = UserType["role"];
+export type Admin = UserType & { id_role: 2 };
+export type Client = UserType & { id_role: 1 };
+
+export type UserRole = UserType["id_role"];
 
 export type AuthStore = {
   isAuthenticated: boolean;
   token: string | null;
-  user: Admin | Client | null;
+  user: UserType | null; 
   setIsAuthenticated: (auth: boolean) => void;
   setToken: (token: string | null) => void;
-  setUser: (user: Admin | Client | null) => void;
+  setUser: (user: UserType | null) => void; 
   logout: () => void;
 };

@@ -8,7 +8,6 @@ import Slider from "react-slick";
 import {
   FaShoppingCart,
   FaHeadphones,
-  FaPhone,
   FaThumbsUp,
 } from "react-icons/fa";
 import { MdFilterList, MdShoppingCart, MdList } from "react-icons/md";
@@ -19,6 +18,7 @@ import { toast } from "react-toastify";
 import { FadeIn } from "../../components/clientHome/FadeIn";
 import { allPackItems } from "../../data/allPackItems";
 import type { PackItemsType } from "../../types/types";
+import ContactButton from './../../components/clientHome/ContactButton';
 
 type ArrowProps = {
   onClick?: () => void;
@@ -170,14 +170,7 @@ export default function PackMateriels() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <ScrollDownButton />
-            <a
-              href="https://www.facebook.com/blit.sono"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-[#145e7a] text-white px-6 py-3 rounded-lg hover:bg-[#0f4a63]"
-            >
-              <FaPhone /> Contactez-nous
-            </a>
+            <ContactButton />
           </div>
         </div>
       </section>

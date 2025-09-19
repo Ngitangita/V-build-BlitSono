@@ -55,7 +55,7 @@ export const SignIn = () => {
           setToken(res.token);
           setUser(res.user);
           setIsAuthenticated(true);
-          navigate(res.user.role === "client" ? "/" : "/admin", {
+          navigate(res.user.id_role == 1 ? "/" : "/admin", {
             replace: true,
           });
           toast.success("Connexion réussie !");

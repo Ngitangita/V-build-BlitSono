@@ -83,6 +83,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="p-6">
+      <title>Accueil | BlitSono</title>
       <h1 className="text-3xl font-bold mb-6 text-[#18769C]">
         Tableau de bord Admin
       </h1>

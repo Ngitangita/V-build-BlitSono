@@ -28,9 +28,10 @@ export type MaterielsType = {
 };
 
 export type Category = {
-  id: number;
+  id_category: number;
   name: string;
 };
+
 
 
 

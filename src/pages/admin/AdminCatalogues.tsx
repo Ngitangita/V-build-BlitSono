@@ -89,6 +89,7 @@ function AdminCatalogues() {
 
   return (
     <div className="p-6">
+      <title>Catalogues | BlitSono</title>
       <div className="flex flex-col items-start gap-4 mb-4 bg-white p-6 rounded">
         <button
           onClick={() => openForm()}
