@@ -1,4 +1,5 @@
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller} from "react-hook-form";
+import type { SubmitHandler } from "react-hook-form";
 import {
   TextField,
   Autocomplete,
@@ -29,7 +30,7 @@ export default function MaterielForm({ materiel, onSave, onCancel }: Props) {
     daily_price: 0,
     replacement_cost: 0,
     is_active: true,
-    id_category: null,
+    category: { id_category: undefined, name: "" },
     created_at: "",
     updated_at: "",
     image_url: "",
@@ -54,46 +55,7 @@ export default function MaterielForm({ materiel, onSave, onCancel }: Props) {
       .catch(() => setCategories([]));
   }, []);
 
-  // const onSubmit = async (data: MaterielsType & { file?: FileList }) => {
-  //   console.log(data);
-
-  //   const form = new FormData();
-  //   form.append("name", data.name ?? "");
-  //   form.append("description", data.description ?? "");
-  //   form.append("daily_price", data.daily_price?.toString() ?? "0");
-  //   form.append("replacement_cost", data.replacement_cost?.toString() ?? "");
-  //   form.append("is_active", data.is_active ? "1" : "0");
-  //   form.append("id_category", data.id_category?.toString() ?? "");
-  //   form.append("stock_total", data.stock_total?.toString() ?? "0");
-  //   form.append("stock_available", data.stock_available?.toString() ?? "0");
-  //   if (data.file?.[0]) form.append("image", data.file[0]);
-
-  //   try {
-  //     const res = await axiosClient({
-  //       method: materiel?.id_product ? "put" : "post",
-  //       url: materiel?.id_product
-  //         ? `/products/${materiel.id_product}`
-  //         : "/products",
-  //       data: form,
-  //       headers: { "Content-Type": "multipart/form-data" },
-  //     });
-
-  //     const savedProductId = res.data.id_product ?? res.data.id;
-  //     const productRes = await axiosClient.get(`/products/${savedProductId}`);
-  //     const savedProduct = productRes.data;
-
-  //     onSave({
-  //       ...savedProduct,
-  //       image_url: savedProduct.image_url ?? "",
-  //       stock_total: savedProduct.stock_total ?? 0,
-  //       stock_available: savedProduct.stock_available ?? 0,
-  //     });
-  //   } catch (err) {
-  //     console.error("Erreur lors de l'enregistrement :", err);
-  //   }
-  // };
-
-  const onSubmit = async (data: MaterielsType) => {
+  const onSubmit: SubmitHandler<MaterielsType> = async (data) => {
     try {
       const res = await axiosClient({
         method: materiel?.id_product ? "put" : "post",
@@ -106,7 +68,7 @@ export default function MaterielForm({ materiel, onSave, onCancel }: Props) {
           daily_price: data.daily_price,
           replacement_cost: data.replacement_cost,
           is_active: data.is_active ? 1 : 0,
-          id_category: data.id_category,
+          id_category: data.category?.id_category,
           stock_total: data.stock_total,
           stock_available: data.stock_available,
         },
@@ -212,7 +174,7 @@ export default function MaterielForm({ materiel, onSave, onCancel }: Props) {
           <div className="w-full">
             <label className="block mb-1">Catégorie</label>
             <Controller
-              name="id_category"
+              name="category.id_category"
               control={control}
               render={({ field }) => (
                 <Autocomplete

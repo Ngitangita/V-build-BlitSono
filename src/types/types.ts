@@ -21,7 +21,6 @@ export type MaterielsType = {
   daily_price: number;
   replacement_cost: number | null;
   is_active: boolean;
-  id_category: number | null;
   created_at: string;
   updated_at: string;
   category?: {

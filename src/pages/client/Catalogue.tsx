@@ -233,7 +233,7 @@ export default function Catalogue() {
           />
         )}
 
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 overflow-hidden bg-white p-4">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center sm:justify-end mb-4">
             <div className="flex flex-row gap-2">
               <button
@@ -281,7 +281,7 @@ export default function Catalogue() {
                   key={m.id_product}
                   whileHover={{ scale: 1.05 }}
                   transition={{ duration: 0.3 }}
-                  className={`group rounded p-3 relative h-auto w-full max-w-full hover:bg-white
+                  className={`group rounded p-3 relative h-auto w-full max-w-full hover:bg-gray-100
                   ${
                     isGrid
                       ? "flex flex-col items-center"

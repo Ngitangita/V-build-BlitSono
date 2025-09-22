@@ -64,16 +64,15 @@ function AdminCategory() {
   };
 
   const handleDelete = async () => {
-  if (!toDelete) return;
-  try {
-    await axiosClient.delete(`/categories/${toDelete.id_category}`);
-    setIsDeleteOpen(false);
-    fetchCategories();
-  } catch (err) {
-    console.error("Erreur lors de la suppression :", err);
-  }
-};
-
+    if (!toDelete) return;
+    try {
+      await axiosClient.delete(`/categories/${toDelete.id_category}`);
+      setIsDeleteOpen(false);
+      fetchCategories();
+    } catch (err) {
+      console.error("Erreur lors de la suppression :", err);
+    }
+  };
 
   const handleEditSave = async () => {
     if (!toEdit) return;
@@ -84,24 +83,20 @@ function AdminCategory() {
     fetchCategories();
   };
 
-   const filtered = categories
-    .filter((c) =>
-      c.name.toLowerCase().includes(searchTerm.toLowerCase())
-    )
+  const filtered = categories
+    .filter((c) => c.name.toLowerCase().includes(searchTerm.toLowerCase()))
     .sort((a, b) => b.id_category - a.id_category);
 
-
   return (
-
-  <div className="p-4 pt-14">
-     <title>Catégories Sono Pro | BlitSono</title>
-     <div className="container border border-gray-50">
-      <div className="flex flex-row flex-wrap items-start gap-2 mb-4 bg-white p-6 rounded">
-         {error && <p className="text-red-500">{error}</p>}
-        <button
-         onClick={() => setIsCreateOpen(true)}
-          className="inline-block px-4 py-2 bg-[#18769C] hover:bg-[#0f5a70] text-white font-medium rounded cursor-pointer"
-        >
+    <div className="p-4 pt-14">
+      <title>Catégories Sono Pro | BlitSono</title>
+      <div className="container border border-gray-50">
+        <div className="flex flex-row flex-wrap items-start gap-2 mb-4 bg-white p-6 rounded">
+          {error && <p className="text-red-500">{error}</p>}
+          <button
+            onClick={() => setIsCreateOpen(true)}
+            className="inline-block px-4 py-2 bg-[#18769C] hover:bg-[#0f5a70] text-white font-medium rounded cursor-pointer"
+          >
             + Ajouter catégorie
           </button>
           <TextField
@@ -137,8 +132,8 @@ function AdminCategory() {
           />
         </div>
 
-        <div className="w-full max-[479px]:overflow-x-auto">
-          <table className="min-w-full bg-white shadow-md rounded-lg">
+        <div className="overflow-hidden hover:overflow-auto max-h-[390px] bg-white shadow-lg rounded">
+          <table className="min-w-full bg-white table-fixed">
             <thead>
               <tr className="bg-gray-200">
                 <th className="py-2 px-4">Nom</th>
@@ -146,29 +141,29 @@ function AdminCategory() {
               </tr>
             </thead>
             <tbody>
-               {filtered.length > 0 ? (
+              {filtered.length > 0 ? (
                 filtered.map((c, i) => (
-                    <tr
-                      key={c.id_category ?? `cat-${i}`}
-                      className="text-center hover:bg-gray-100 even:bg-gray-50"
-                    >
-                      <td className="py-3 px-4">{c.name}</td>
-                      <td className="py-3 px-4 flex justify-center gap-2">
-                        <button
-                          onClick={() => openEdit(c)}
-                          className="inline-block p-2 bg-[#18769C] hover:bg-[#0f5a70] text-white font-medium rounded transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#18769C]/50 cursor-pointer"
-                        >
-                          <FaRegEdit />
-                        </button>
-                        <button
-                          onClick={() => openDelete(c)}
-                          className="bg-red-500 text-white p-2 rounded hover:bg-red-600 cursor-pointer"
-                        >
-                          <MdDelete />
-                        </button>
-                      </td>
-                    </tr>
-                  ))
+                  <tr
+                    key={c.id_category ?? `cat-${i}`}
+                    className="text-center hover:bg-gray-100 even:bg-gray-50"
+                  >
+                    <td className="py-3 px-4">{c.name}</td>
+                    <td className="py-3 px-4 flex justify-center gap-2">
+                      <button
+                        onClick={() => openEdit(c)}
+                        className="inline-block p-2 bg-[#18769C] hover:bg-[#0f5a70] text-white font-medium rounded transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#18769C]/50 cursor-pointer"
+                      >
+                        <FaRegEdit />
+                      </button>
+                      <button
+                        onClick={() => openDelete(c)}
+                        className="bg-red-500 text-white p-2 rounded hover:bg-red-600 cursor-pointer"
+                      >
+                        <MdDelete />
+                      </button>
+                    </td>
+                  </tr>
+                ))
               ) : (
                 <tr>
                   <td colSpan={2} className="py-4 text-center">
@@ -219,7 +214,8 @@ function AdminCategory() {
         >
           <div className="bg-white rounded-lg shadow-lg w-[90%] sm:w-[400px] p-6">
             <p className="mb-6">
-              Voullez-vous vraiment supprimer la catégorie <strong>{toDelete.name}</strong> ?
+              Voullez-vous vraiment supprimer la catégorie{" "}
+              <strong>{toDelete.name}</strong> ?
             </p>
             <div className="flex justify-between">
               <button
