@@ -15,17 +15,24 @@ export type MenuCategorie = {
 };
 
 export type MaterielsType = {
-  id: number;
-  nom: string;
-  categorieId: {
-    nom: string;
+  id_product?: number;
+  name: string;
+  description: string | null;
+  daily_price: number;
+  replacement_cost: number | null;
+  is_active: boolean;
+  id_category: number | null;
+  created_at: string;
+  updated_at: string;
+  category?: {
+    id_category: number;
+    name: string;
   };
-  image_url: string;
-  prix_location: number;
-  stock_total: number;
-  stock_available: number;
-  description: string;
+  image_url?: string;      
+  stock_total?: number;   
+  stock_available?: number; 
 };
+
 
 export type Category = {
   id_category: number;

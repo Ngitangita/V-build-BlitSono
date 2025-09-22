@@ -1,4 +1,4 @@
-import { TextField } from "@mui/material";
+import { TextField, MenuItem } from "@mui/material";
 import type { Dispatch, SetStateAction } from "react";
 
 interface MaterielSearchProps {
@@ -12,6 +12,8 @@ interface MaterielSearchProps {
   setSearchStockAvailable: Dispatch<SetStateAction<string>>;
   searchCategorie: string;
   setSearchCategorie: Dispatch<SetStateAction<string>>;
+  searchStatus: string;
+  setSearchStatus: Dispatch<SetStateAction<string>>;
 }
 
 const MaterielSearch = ({
@@ -25,6 +27,8 @@ const MaterielSearch = ({
   setSearchStockAvailable,
   searchCategorie,
   setSearchCategorie,
+  searchStatus,
+  setSearchStatus,
 }: MaterielSearchProps) => {
   const textFieldSx = {
     height: "40px",
@@ -40,7 +44,7 @@ const MaterielSearch = ({
   };
 
   return (
-    <div className="flex gap-2 flex-wrap">
+    <div className="flex gap-2 flex-wrap z-0">
       <TextField
         label="Nom"
         type="search"
@@ -48,7 +52,7 @@ const MaterielSearch = ({
         onChange={(e) => setSearchName(e.target.value)}
         variant="outlined"
         size="small"
-        sx={{ ...textFieldSx, width: "200px" }}
+        sx={{ ...textFieldSx, width: "150px" }}
       />
       <TextField
         label="Prix"
@@ -57,11 +61,25 @@ const MaterielSearch = ({
         onChange={(e) => setSearchPrix(e.target.value)}
         variant="outlined"
         size="small"
-        sx={{ ...textFieldSx,  width: {
+        sx={{
+          ...textFieldSx,
+          width: {
             xs: "200px",
-            sm: "120px",
-          }, }}
+            sm: "100px",
+          },
+        }}
       />
+
+      <TextField
+        label="Catégorie"
+        type="search"
+        value={searchCategorie}
+        onChange={(e) => setSearchCategorie(e.target.value)}
+        variant="outlined"
+        size="small"
+        sx={{ ...textFieldSx, width: "130px" }}
+      />
+
       <TextField
         label="Stock total"
         type="search"
@@ -69,10 +87,13 @@ const MaterielSearch = ({
         onChange={(e) => setSearchStockTotal(e.target.value)}
         variant="outlined"
         size="small"
-          sx={{ ...textFieldSx,  width: {
+        sx={{
+          ...textFieldSx,
+          width: {
             xs: "200px",
-            sm: "120px",
-          }, }}
+            sm: "100px",
+          },
+        }}
       />
       <TextField
         label="Stock dispo"
@@ -81,20 +102,28 @@ const MaterielSearch = ({
         onChange={(e) => setSearchStockAvailable(e.target.value)}
         variant="outlined"
         size="small"
-          sx={{ ...textFieldSx,  width: {
+        sx={{
+          ...textFieldSx,
+          width: {
             xs: "200px",
-            sm: "120px",
-          }, }}
+            sm: "100px",
+          },
+        }}
       />
+
       <TextField
-        label="Catégorie"
-        type="search"
-        value={searchCategorie}
-        onChange={(e) => setSearchCategorie(e.target.value)}
+        select
+        label="Statut"
+        value={searchStatus}
+        onChange={(e) => setSearchStatus(e.target.value)}
         variant="outlined"
         size="small"
-        sx={{ ...textFieldSx, width: "200px" }}
-      />
+        sx={{ ...textFieldSx, width: "100px" }}
+      >
+        <MenuItem value="">Tous</MenuItem>
+        <MenuItem value="actif">Actif</MenuItem>
+        <MenuItem value="inactif">Inactif</MenuItem>
+      </TextField>
     </div>
   );
 };

@@ -84,17 +84,24 @@ function AdminCategory() {
     fetchCategories();
   };
 
-  return (
-    <>
-      <title>Catégories Sono Pro | BlitSono</title>
+   const filtered = categories
+    .filter((c) =>
+      c.name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .sort((a, b) => b.id_category - a.id_category);
 
-      <div className="container border border-gray-50">
-        <div className="flex items-center gap-4 p-4 w-[1015px] fixed bg-white z-50">
-          {error && <p className="text-red-500">{error}</p>}
-          <button
-            onClick={() => setIsCreateOpen(true)}
-            className="inline-block px-4 py-2 bg-[#18769C] hover:bg-[#0f5a70] text-white font-medium rounded transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#18769C]/50 cursor-pointer"
-          >
+
+  return (
+
+  <div className="p-4 pt-14">
+     <title>Catégories Sono Pro | BlitSono</title>
+     <div className="container border border-gray-50">
+      <div className="flex flex-row flex-wrap items-start gap-2 mb-4 bg-white p-6 rounded">
+         {error && <p className="text-red-500">{error}</p>}
+        <button
+         onClick={() => setIsCreateOpen(true)}
+          className="inline-block px-4 py-2 bg-[#18769C] hover:bg-[#0f5a70] text-white font-medium rounded cursor-pointer"
+        >
             + Ajouter catégorie
           </button>
           <TextField
@@ -131,7 +138,7 @@ function AdminCategory() {
         </div>
 
         <div className="w-full max-[479px]:overflow-x-auto">
-          <table className="min-w-full bg-white shadow-md rounded-lg mt-[100px]">
+          <table className="min-w-full bg-white shadow-md rounded-lg">
             <thead>
               <tr className="bg-gray-200">
                 <th className="py-2 px-4">Nom</th>
@@ -139,13 +146,8 @@ function AdminCategory() {
               </tr>
             </thead>
             <tbody>
-              {categories.length ? (
-                categories
-                  .filter((c) =>
-                    c.name.toLowerCase().includes(searchTerm.toLowerCase())
-                  )
-                  .sort((a, b) => b.id_category - a.id_category)
-                  .map((c, i) => (
+               {filtered.length > 0 ? (
+                filtered.map((c, i) => (
                     <tr
                       key={c.id_category ?? `cat-${i}`}
                       className="text-center hover:bg-gray-100 even:bg-gray-50"
@@ -264,7 +266,7 @@ function AdminCategory() {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }
 

@@ -48,9 +48,9 @@ function ProtectedLayout() {
                 className="
                   bg-white shadow 
                   px-2 py-2 max-[479px]:text-sm
-                  sm:px-4 sm:py-3
+                  sm:px-4 sm:py-3 z-50
                   flex flex-col gap-2 items-start
-                  sm:flex-row sm:justify-between sm:items-center
+                  sm:flex-row sm:justify-between sm:items-center fixed w-[1030px]
                 "
               >
                 <h1

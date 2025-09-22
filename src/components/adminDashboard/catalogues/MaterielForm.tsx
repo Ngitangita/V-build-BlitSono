@@ -1,8 +1,13 @@
 import { useForm, Controller } from "react-hook-form";
-import axios from "axios";
-import { TextField, Autocomplete } from "@mui/material";
+import {
+  TextField,
+  Autocomplete,
+  Checkbox,
+  FormControlLabel,
+} from "@mui/material";
 import type { MaterielsType, Category } from "../../../types/types";
 import { useEffect, useState, useRef } from "react";
+import axiosClient from "./../../../conf/axiosClient";
 
 type Props = {
   materiel: MaterielsType | null;
@@ -10,94 +15,136 @@ type Props = {
   onCancel: () => void;
 };
 
-type MaterielFormFields =
-  | "nom"
-  | "description"
-  | "prix_location"
-  | "stock_total"
-  | "stock_available"
-  | "image_url";
-
 export default function MaterielForm({ materiel, onSave, onCancel }: Props) {
   const [categories, setCategories] = useState<Category[]>([]);
   const overlayRef = useRef<HTMLDivElement>(null);
 
-  const { register, handleSubmit, control } = useForm<MaterielsType & { file?: FileList }>({
-    defaultValues: materiel ?? {
-      id: 0,
-      nom: "",
-      description: "",
-      categorieId: { nom: "" },
-      prix_location: 0,
-      stock_total: 0,
-      stock_available: 0,
-      image_url: "",
-    },
-  });
+  const { register, handleSubmit, control, reset } = useForm<
+  MaterielsType & { file?: FileList }
+>({
+  defaultValues: {
+    id_product: 0,
+    name: "",
+    description: "",
+    daily_price: 0,
+    replacement_cost: 0,
+    is_active: true,
+    id_category: null,
+    created_at: "",
+    updated_at: "",
+    image_url: "",
+    stock_total: 0,
+    stock_available: 0,
+  },
+});
+
 
   useEffect(() => {
-    axios
-      .get<Category[]>("/api/categories")
-      .then((res) => (Array.isArray(res.data) ? setCategories(res.data) : setCategories([])))
+    if (materiel) {
+      reset(materiel);
+    }
+  }, [materiel, reset]);
+
+  useEffect(() => {
+    axiosClient
+      .get<Category[]>("/categories")
+      .then((res) =>
+        Array.isArray(res.data) ? setCategories(res.data) : setCategories([])
+      )
       .catch(() => setCategories([]));
   }, []);
 
-  const onSubmit = async (data: MaterielsType & { file?: FileList }) => {
-    const form = new FormData();
+  // const onSubmit = async (data: MaterielsType & { file?: FileList }) => {
+  //   console.log(data);
 
-    // on mappe correctement les champs existants
-    const keys: (keyof MaterielsType)[] = [
-      "nom",
-      "description",
-      "prix_location",
-      "stock_total",
-      "stock_available",
-    ];
-    keys.forEach((key) => {
-      const value = data[key];
-      form.append(key, value?.toString() ?? "");
-    });
+  //   const form = new FormData();
+  //   form.append("name", data.name ?? "");
+  //   form.append("description", data.description ?? "");
+  //   form.append("daily_price", data.daily_price?.toString() ?? "0");
+  //   form.append("replacement_cost", data.replacement_cost?.toString() ?? "");
+  //   form.append("is_active", data.is_active ? "1" : "0");
+  //   form.append("id_category", data.id_category?.toString() ?? "");
+  //   form.append("stock_total", data.stock_total?.toString() ?? "0");
+  //   form.append("stock_available", data.stock_available?.toString() ?? "0");
+  //   if (data.file?.[0]) form.append("image", data.file[0]);
 
-    // catégorie
-    form.append("categorieId", data.categorieId?.nom ?? "");
+  //   try {
+  //     const res = await axiosClient({
+  //       method: materiel?.id_product ? "put" : "post",
+  //       url: materiel?.id_product
+  //         ? `/products/${materiel.id_product}`
+  //         : "/products",
+  //       data: form,
+  //       headers: { "Content-Type": "multipart/form-data" },
+  //     });
 
-    if (data.file?.[0]) form.append("image", data.file[0]);
+  //     const savedProductId = res.data.id_product ?? res.data.id;
+  //     const productRes = await axiosClient.get(`/products/${savedProductId}`);
+  //     const savedProduct = productRes.data;
 
-    await axios({
-      method: materiel?.id ? "put" : "post",
-      url: materiel?.id ? `/api/materiels/${materiel.id}` : "/api/materiels",
-      data: form,
-      headers: { "Content-Type": "multipart/form-data" },
-    });
+  //     onSave({
+  //       ...savedProduct,
+  //       image_url: savedProduct.image_url ?? "",
+  //       stock_total: savedProduct.stock_total ?? 0,
+  //       stock_available: savedProduct.stock_available ?? 0,
+  //     });
+  //   } catch (err) {
+  //     console.error("Erreur lors de l'enregistrement :", err);
+  //   }
+  // };
 
-    onSave({ ...data, id: materiel?.id ?? data.id });
+  const onSubmit = async (data: MaterielsType) => {
+    try {
+      const res = await axiosClient({
+        method: materiel?.id_product ? "put" : "post",
+        url: materiel?.id_product
+          ? `/products/${materiel.id_product}`
+          : "/products",
+        data: {
+          name: data.name,
+          description: data.description,
+          daily_price: data.daily_price,
+          replacement_cost: data.replacement_cost,
+          is_active: data.is_active ? 1 : 0,
+          id_category: data.id_category,
+          stock_total: data.stock_total,
+          stock_available: data.stock_available,
+        },
+      });
+
+      const savedProductId = res.data.id_product ?? res.data.id;
+      const productRes = await axiosClient.get(`/products/${savedProductId}`);
+      const savedProduct = productRes.data;
+
+      onSave({
+        ...savedProduct,
+        image_url: savedProduct.image_url ?? "",
+        stock_total: savedProduct.stock_total ?? 0,
+        stock_available: savedProduct.stock_available ?? 0,
+      });
+    } catch (err) {
+      console.error("Erreur lors de l'enregistrement :", err);
+    }
   };
 
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === overlayRef.current) onCancel();
   };
 
-  const fields: MaterielFormFields[] = [
-    "nom",
-    "description",
-    "prix_location",
-    "stock_total",
-    "stock_available",
-    "image_url",
-  ];
-
   return (
     <div
       ref={overlayRef}
       onClick={handleOverlayClick}
-      className="fixed inset-0 bg-[#1E2939]/80 bg-opacity-50 flex items-center justify-center z-50"
+      className="fixed inset-0 bg-[#1E2939]/80 flex items-center justify-center z-50"
     >
-      <div className="bg-white rounded-lg shadow-lg sm:w-[800px] w-full">
-        <div className="flex justify-between items-center p-4">
-          <h2 className="text-xl">{materiel ? "Éditer Matériel" : "Ajouter Matériel"}</h2>
+      <div className="bg-white rounded-lg shadow-lg w-full sm:w-[600px] md:w-[700px] lg:w-[800px] xl:w-[700px] 2xl:w-[1000px] max-h-[90vh] overflow-auto">
+        <div className="flex justify-between items-center p-4 sticky top-0 bg-white border-b">
+          <h2 className="text-xl">
+            {materiel ? "Éditer Matériel" : "Ajouter Matériel"}
+          </h2>
           <button
             onClick={onCancel}
-            className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600 text-3xl relative bottom-4 left-4 cursor-pointer"
+            className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600 text-3xl cursor-pointer"
           >
             ×
           </button>
@@ -105,50 +152,102 @@ export default function MaterielForm({ materiel, onSave, onCancel }: Props) {
 
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="p-6 rounded flex flex-row flex-wrap items-center justify-between"
+          className="p-6 flex flex-col gap-4"
         >
-          {fields.map((key) => (
-            <div key={key} className="mb-3">
-              <label className="block mb-1">{key}</label>
-              <input
-                {...register(key, key === "prix_location" ||
-                key === "stock_total" ||
-                key === "stock_available"
-                  ? { valueAsNumber: true }
-                  : undefined)}
-                type={
-                  key === "prix_location" ||
-                  key === "stock_total" ||
-                  key === "stock_available"
-                    ? "number"
-                    : "text"
-                }
-                step={key === "prix_location" ? "0.01" : undefined}
-                className="w-[400px] sm:w-[350px] p-2 pr-10 border rounded outline-[#18769C] border-[#18769C]/50"
-              />
-            </div>
-          ))}
+          <div className="flex flex-col w-full">
+            <label className="mb-1">Nom</label>
+            <input
+              {...register("name")}
+              type="text"
+              className="w-full p-2 border rounded outline-[#18769C] border-[#18769C]/50"
+            />
+          </div>
 
-          <div className="mb-3 w-full sm:w-[350px]">
+          <div className="flex flex-col w-full">
+            <label className="mb-1">Description</label>
+            <textarea
+              {...register("description")}
+              className="w-full p-2 border rounded outline-[#18769C] border-[#18769C]/50"
+              rows={3}
+            />
+          </div>
+
+          <div className="flex flex-col w-full">
+            <label className="mb-1">Prix journalier (Ar)</label>
+            <input
+              {...register("daily_price", { valueAsNumber: true })}
+              type="number"
+              step="0.01"
+              className="w-full p-2 border rounded outline-[#18769C] border-[#18769C]/50"
+            />
+          </div>
+
+          <div className="flex flex-col w-full">
+            <label className="mb-1">Coût de remplacement (Ar)</label>
+            <input
+              {...register("replacement_cost", { valueAsNumber: true })}
+              type="number"
+              className="w-full p-2 border rounded outline-[#18769C] border-[#18769C]/50"
+            />
+          </div>
+
+          <div className="flex flex-col w-full">
+            <label className="mb-1">Stock total</label>
+            <input
+              {...register("stock_total", { valueAsNumber: true })}
+              type="number"
+              className="w-full p-2 border rounded outline-[#18769C] border-[#18769C]/50"
+            />
+          </div>
+
+          <div className="flex flex-col w-full">
+            <label className="mb-1">Stock disponible</label>
+            <input
+              {...register("stock_available", { valueAsNumber: true })}
+              type="number"
+              className="w-full p-2 border rounded outline-[#18769C] border-[#18769C]/50"
+            />
+          </div>
+
+          <div className="w-full">
             <label className="block mb-1">Catégorie</label>
             <Controller
-              name="categorieId"
+              name="id_category"
               control={control}
               render={({ field }) => (
                 <Autocomplete
                   options={categories}
                   getOptionLabel={(o) => o.name}
-                  value={categories.find((c) => c.name === field.value?.nom) ?? null}
-                  onChange={(_, v) =>
-                    field.onChange(v ? { nom: v.name } : { nom: "" })
+                  value={
+                    categories.find((c) => c.id_category === field.value) ??
+                    null
                   }
+                  onChange={(_, v) => field.onChange(v ? v.id_category : null)}
                   renderInput={(params) => <TextField {...params} />}
                 />
               )}
             />
           </div>
 
-          <div className="mb-3 w-full">
+          <div className="w-full">
+            <Controller
+              name="is_active"
+              control={control}
+              render={({ field }) => (
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={field.value}
+                      onChange={(e) => field.onChange(e.target.checked)}
+                    />
+                  }
+                  label="Actif"
+                />
+              )}
+            />
+          </div>
+
+          <div className="w-full">
             <label className="block mb-1">Image</label>
             <input
               {...register("file")}
@@ -158,17 +257,17 @@ export default function MaterielForm({ materiel, onSave, onCancel }: Props) {
             />
           </div>
 
-          <div className="flex justify-end gap-2 w-full mt-4">
+          <div className="flex justify-end gap-2 w-full mt-4 sticky bottom-0 bg-white p-4 border-t">
             <button
               type="button"
               onClick={onCancel}
-              className="inline-block px-4 py-2 bg-gray-300 hover:bg-gray-400 text-white rounded cursor-pointer"
+              className="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-white rounded cursor-pointer"
             >
               Annuler
             </button>
             <button
               type="submit"
-              className="inline-block px-4 py-2 bg-[#18769C] hover:bg-[#0f5a70] text-white rounded"
+              className="px-4 py-2 bg-[#18769C] hover:bg-[#0f5a70] text-white rounded cursor-pointer"
             >
               Enregistrer
             </button>

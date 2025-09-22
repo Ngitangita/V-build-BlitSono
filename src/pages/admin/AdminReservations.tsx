@@ -62,7 +62,7 @@ export default function AdminReservations() {
   );
 
   const commonSX = {
-    width: "200px",
+    width: "140px",
     height: "40px",
     ".MuiInputBase-root": { height: "40px" },
     "& .MuiInputLabel-outlined": { color: "#18769C" },
@@ -75,17 +75,19 @@ export default function AdminReservations() {
   };
 
   return (
-    <div className="p-6">
-       <title>Réservations | BlitSono</title>
-      <h1 className="text-3xl font-bold mb-6 text-[#18769C]">
-        Gestion des Réservations
-      </h1>
+    <div className="p-4 pt-14">
+      <title>Réservations | BlitSono</title>
+      <div className="flex flex-row flex-wrap items-start gap-2 mb-4 bg-white p-4 rounded">
+        <h1 className="text-3xl font-bold mb-6 text-[#18769C]">
+          Gestion des Réservations
+        </h1>
 
-      <ReservationFilters
-        filter={filter}
-        setFilter={setFilter}
-        commonSX={commonSX}
-      />
+        <ReservationFilters
+          filter={filter}
+          setFilter={setFilter}
+          commonSX={commonSX}
+        />
+      </div>
       <div className="w-full max-[479px]:overflow-x-auto">
         <table className="w-full table-auto bg-white shadow rounded">
           <thead className="bg-gray-100">

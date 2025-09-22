@@ -69,7 +69,7 @@ export default function AdminDashboard() {
   }, [reservations, filter]);
 
   const commonSX = {
-    width: "200px",
+    width: "150px",
     height: "40px",
     ".MuiInputBase-root": { height: "40px" },
     "& .MuiInputLabel-outlined": { color: "#18769C" },
@@ -82,57 +82,63 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-4 pt-14">
       <title>Accueil | BlitSono</title>
-      <h1 className="text-3xl font-bold mb-6 text-[#18769C]">
-        Tableau de bord Admin
-      </h1>
+      <div className="flex flex-row flex-wrap items-start gap-2 mb-4 bg-white p-4 rounded">
+        <h1 className="text-3xl font-bold mb-6 text-[#18769C]">
+          Tableau de bord Admin
+        </h1>
 
-      <div className="flex flex-wrap gap-4 mb-6">
-        <TextField
-          label="Client"
-          type="search"
-          value={filter.client}
-          onChange={(e) => setFilter((f) => ({ ...f, client: e.target.value }))}
-          variant="outlined"
-          size="small"
-          sx={commonSX}
-        />
-        <TextField
-          label="Date/Heure"
-          type="search"
-          value={filter.dateHeure}
-          onChange={(e) =>
-            setFilter((f) => ({ ...f, dateHeure: e.target.value }))
-          }
-          variant="outlined"
-          size="small"
-          sx={commonSX}
-        />
-        <TextField
-          label="Lieu"
-          type="search"
-          value={filter.lieu}
-          onChange={(e) => setFilter((f) => ({ ...f, lieu: e.target.value }))}
-          variant="outlined"
-          size="small"
-          sx={commonSX}
-        />
-        <TextField
-          label="Statut"
-          select
-          SelectProps={{ native: true }}
-          value={filter.statut}
-          onChange={(e) => setFilter((f) => ({ ...f, statut: e.target.value }))}
-          variant="outlined"
-          size="small"
-          sx={commonSX}
-        >
-          <option value="">Tous statuts</option>
-          <option value="en_attente">En attente</option>
-          <option value="validee">Validée</option>
-          <option value="refusee">Refusée</option>
-        </TextField>
+        <div className="flex flex-wrap gap-4 mb-6">
+          <TextField
+            label="Client"
+            type="search"
+            value={filter.client}
+            onChange={(e) =>
+              setFilter((f) => ({ ...f, client: e.target.value }))
+            }
+            variant="outlined"
+            size="small"
+            sx={commonSX}
+          />
+          <TextField
+            label="Date/Heure"
+            type="search"
+            value={filter.dateHeure}
+            onChange={(e) =>
+              setFilter((f) => ({ ...f, dateHeure: e.target.value }))
+            }
+            variant="outlined"
+            size="small"
+            sx={commonSX}
+          />
+          <TextField
+            label="Lieu"
+            type="search"
+            value={filter.lieu}
+            onChange={(e) => setFilter((f) => ({ ...f, lieu: e.target.value }))}
+            variant="outlined"
+            size="small"
+            sx={commonSX}
+          />
+          <TextField
+            label="Statut"
+            select
+            SelectProps={{ native: true }}
+            value={filter.statut}
+            onChange={(e) =>
+              setFilter((f) => ({ ...f, statut: e.target.value }))
+            }
+            variant="outlined"
+            size="small"
+            sx={commonSX}
+          >
+            <option value="">Tous statuts</option>
+            <option value="en_attente">En attente</option>
+            <option value="validee">Validée</option>
+            <option value="refusee">Refusée</option>
+          </TextField>
+        </div>
       </div>
 
       <div className="w-full max-[479px]:overflow-x-auto">

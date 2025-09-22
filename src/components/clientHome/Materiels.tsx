@@ -1,9 +1,34 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FaThumbsUp, FaHandPointRight } from "react-icons/fa";
-import { allMateriels } from "../../data/allMateriels";
 import { motion } from "framer-motion";
+import axiosClient from "../../conf/axiosClient";
+import type { MaterielsType } from "../../types/types";
+
 
 export default function Materiels() {
+  const [materiels, setMateriels] = useState<MaterielsType[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchMateriels = async () => {
+      try {
+        const res = await axiosClient.get("/products"); 
+        if (Array.isArray(res.data)) {
+          setMateriels(res.data);
+        } else if (Array.isArray(res.data?.data)) {
+          setMateriels(res.data.data);
+        }
+      } catch (err) {
+        console.error("Erreur lors du fetch des matériels :", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMateriels();
+  }, []);
+
   return (
     <div className="px-8">
       <div className="text-[#18769C] w-full flex flex-col gap-4 pt-10 pb-8">
@@ -27,31 +52,33 @@ export default function Materiels() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-        {allMateriels.slice(0, 9).map((m, i) => (
-          <motion.div
-                  key={i}
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ duration: 0.3 }}
-                  className="
-              group rounded hover:bg-white
-              "
-                >
-          <Link to={`/materiel/${m.id}`}>
-            <div className="p-4 flex flex-col items-center gap-3 transform transition duration-300 ">
-              <img
-                src={m.image_url}
-                alt={m.nom}
-                className="w-full max-w-xs h-40 md:h-48 object-cover rounded"
-              />
-              <h3 className="mt-2 font-semibold text-lg text-gray-800 group-hover:text-[#18769C]">
-                {m.nom}
-              </h3>
-            </div>
-          </Link>
-          </motion.div>
-        ))}
-      </div>
+      {loading ? (
+        <p className="text-center text-gray-500 py-10">Chargement...</p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          {materiels.slice(0, 9).map((m) => (
+            <motion.div
+              key={m.id_product}
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.3 }}
+              className="group rounded hover:bg-white"
+            >
+              <Link to={`/materiel/${m.id_product}`}>
+                <div className="p-4 flex flex-col items-center gap-3 transform transition duration-300 ">
+                  <img
+                    src={m.image_url || "/placeholder.png"}
+                    alt={m.name}
+                    className="w-full max-w-xs h-40 md:h-48 object-cover rounded"
+                  />
+                  <h3 className="mt-2 font-semibold text-lg text-gray-800 group-hover:text-[#18769C]">
+                    {m.name}
+                  </h3>
+                </div>
+              </Link>
+            </motion.div>
+          ))}
+        </div>
+      )}
 
       <div className="mt-6 text-center">
         <Link

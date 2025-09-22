@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { priceRanges } from "../../constants/priceRanges";
 
 type PriceRange = {
   label: string;
@@ -14,8 +13,8 @@ export type FiltersCategoryType = {
   selectedPrices: PriceRange[];
   onPricesChange: (prs: PriceRange[]) => void;
   resetAll: () => void;
+  priceRanges: PriceRange[];   
 };
-
 
 export default function FiltersCategory({
   categories, 
@@ -24,6 +23,7 @@ export default function FiltersCategory({
   selectedPrices,
   onPricesChange,
   resetAll,
+   priceRanges,
 }: FiltersCategoryType) {
   const [showAllCats, setShowAllCats] = useState(false);
   const [showAllPrices, setShowAllPrices] = useState(false);
