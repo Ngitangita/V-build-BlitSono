@@ -30,6 +30,10 @@ export type MaterielsType = {
   image_url?: string;      
   stock_total?: number;   
   stock_available?: number; 
+   pivot?: {
+    quantity?: number;
+    price?: number;
+  };
 };
 
 
@@ -38,53 +42,30 @@ export type Category = {
   name: string;
 };
 
-
-
-
-export type PackItems = {
-  id: number;
-  nom: string;
-  description: string;
-  prix_location: number;
-};
-
-export type PackType = {
-  id: number;
+export type PacksType = {
+  id_bundle: number,
   name: string;
-  description: string;
-  price_override: number;
-};
-export type ProductType = {
-  id: number;
-  nom: string;
-  categoryId?: { name: string };
-  image_url: string;
-  prix: number;
-  stock_total: number;
-  stock_available: number;
-  description: string;
-};
-export type PackItemsType = {
-  id: number;
-  packId: PackType;
-  productId: ProductType;
-  quantite: number;
+  description?: string; 
+  daily_price: number;
+  is_active: boolean;
+  created_at: string; 
+  pivot?: { quantity?: number; price?: number };
+}
+
+export type BundleProductType = {
+  id_bundle: number;      
+  id_product: number;     
+  quantity: number;       
 };
 
 
-export type Reservation = {
-  id: string;
-  userId: number;
-  date: string;
-  heure: string;
-  dureeHeure: number;
-  materiel: string[];
-  lieu: string;
-  statut: "en_attente" | "confirmée";
-  prixEstime: number;
-  prixFinal?: number;
-  etatCommande: string;
+export type BundleProductTypes = {
+  bundle: PacksType;       
+  product: MaterielsType;  
+  quantity: number;
 };
+
+
 
 export type MaterielReserved = {
   materiel_id: number;
@@ -114,3 +95,9 @@ export type ReservationDetail = ReservationBase & {
 };
 
 
+export type PackItemsType = {
+  id: number;
+  packId: PacksType;
+  productId: MaterielsType;
+  quantite: number;
+};

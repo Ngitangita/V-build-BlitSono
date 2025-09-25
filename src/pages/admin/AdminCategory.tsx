@@ -132,7 +132,7 @@ function AdminCategory() {
           />
         </div>
 
-        <div className="overflow-hidden hover:overflow-auto max-h-[390px] bg-white shadow-lg rounded">
+        <div>
           <table className="min-w-full bg-white table-fixed">
             <thead>
               <tr className="bg-gray-200">

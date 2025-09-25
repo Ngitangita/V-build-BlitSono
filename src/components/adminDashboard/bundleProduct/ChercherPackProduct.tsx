@@ -1,0 +1,151 @@
+import { TextField, MenuItem } from "@mui/material";
+import type { Dispatch, SetStateAction } from "react";
+import { MdFilterList, MdClose } from "react-icons/md";
+
+interface ChercherPackProductProps {
+  searchName: string;
+  setSearchName: Dispatch<SetStateAction<string>>;
+  searchPack: string;
+  setSearchPack: Dispatch<SetStateAction<string>>;
+  searchCategorie: string;
+  setSearchCategorie: Dispatch<SetStateAction<string>>;
+  searchStatus: string;
+  setSearchStatus: Dispatch<SetStateAction<string>>;
+  searchPrix: string;
+  setSearchPrix: Dispatch<SetStateAction<string>>;
+  searchQuantity: string;
+  setSearchQuantity: Dispatch<SetStateAction<string>>;
+  searchStock: string;
+  setSearchStock: Dispatch<SetStateAction<string>>;
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+}
+
+const ChercherPackProduct = ({
+  searchName,
+  setSearchName,
+  searchPack,
+  setSearchPack,
+  searchCategorie,
+  setSearchCategorie,
+  searchStatus,
+  setSearchStatus,
+  searchPrix,
+  setSearchPrix,
+  searchQuantity,
+  setSearchQuantity,
+  searchStock,
+  setSearchStock,
+  open,
+  setOpen,
+}: ChercherPackProductProps) => {
+  const textFieldSx = {
+    height: "40px",
+    ".MuiInputBase-root": { height: "40px" },
+    "& .MuiInputLabel-outlined": { color: "#18769C" },
+    "& .MuiInputLabel-outlined.Mui-focused": { color: "#0f5a70" },
+    "& .MuiOutlinedInput-notchedOutline": { borderColor: "#18769C" },
+    "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#18769C" },
+    "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+      borderColor: "#0f5a70",
+    },
+  };
+
+  return (
+    <div className="w-full relative">
+<button
+        className="sm:hidden fixed top-23 sm:left-2 z-40 text-2xl focus:outline-none cursor-pointer flex items-center gap-2 p-2 rounded-md text-white bg-[#18769C] hover:bg-[#0f5a70]"
+        onClick={() => setOpen((o) => !o)}
+      >
+        {open ? (
+          <>
+            <MdClose className="w-6 h-6" /> Fermer
+          </>
+        ) : (
+          <>
+            <MdFilterList className="w-6 h-6" /> Filtrer
+          </>
+        )}
+      </button>
+      <div
+        className={`fixed inset-y-0 left-0 z-30 bg-white shadow-md overflow-auto
+          transform transition-transform duration-300 ease-in-out 
+          ${open ? "translate-x-0 top-16 h-72" : "-translate-x-full "}
+          sm:relative sm:translate-x-0 sm:bg-transparent sm:shadow-none sm:top-0`}
+      >
+        <div className="flex gap-2 flex-wrap z-0 pt-20 p-2 sm:p-0">
+          <TextField
+            label="Nom produit"
+            value={searchName}
+            onChange={(e) => setSearchName(e.target.value)}
+            variant="outlined"
+            size="small"
+            sx={{ ...textFieldSx, width: "150px" }}
+          />
+          <TextField
+            label="Pack"
+            value={searchPack}
+            onChange={(e) => setSearchPack(e.target.value)}
+            variant="outlined"
+            size="small"
+            sx={{ ...textFieldSx, width: "150px" }}
+          />
+          <TextField
+            label="Catégorie"
+            value={searchCategorie}
+            onChange={(e) => setSearchCategorie(e.target.value)}
+            variant="outlined"
+            size="small"
+            sx={{ ...textFieldSx, width: "150px" }}
+          />
+          <TextField
+            label="Prix"
+            value={searchPrix}
+            onChange={(e) => setSearchPrix(e.target.value)}
+            variant="outlined"
+            size="small"
+            sx={{ ...textFieldSx, width: "120px" }}
+          />
+          <TextField
+            label="Quantité"
+            value={searchQuantity}
+            onChange={(e) => setSearchQuantity(e.target.value)}
+            variant="outlined"
+            size="small"
+            sx={{ ...textFieldSx, width: "100px" }}
+          />
+          <TextField
+            label="Stock dispo"
+            value={searchStock}
+            onChange={(e) => setSearchStock(e.target.value)}
+            variant="outlined"
+            size="small"
+            sx={{ ...textFieldSx, width: "100px" }}
+          />
+          <TextField
+            select
+            label="Statut"
+            value={searchStatus}
+            onChange={(e) => setSearchStatus(e.target.value)}
+            variant="outlined"
+            size="small"
+            sx={{ ...textFieldSx, width: "100px" }}
+          >
+            <MenuItem value="">Tous</MenuItem>
+            <MenuItem value="actif">Actif</MenuItem>
+            <MenuItem value="inactif">Inactif</MenuItem>
+          </TextField>
+        </div>
+      </div>
+
+      {open && (
+        <div
+          className="fixed inset-0 bg-black/30 z-20 sm:hidden"
+          onClick={() => setOpen(false)}
+        />
+      )}
+    </div>
+  );
+};
+
+export default ChercherPackProduct;

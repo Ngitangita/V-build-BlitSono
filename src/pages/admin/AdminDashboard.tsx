@@ -85,10 +85,6 @@ export default function AdminDashboard() {
     <div className="p-4 pt-14">
       <title>Accueil | BlitSono</title>
       <div className="flex flex-row flex-wrap items-start gap-2 mb-4 bg-white p-4 rounded">
-        <h1 className="text-3xl font-bold mb-6 text-[#18769C]">
-          Tableau de bord Admin
-        </h1>
-
         <div className="flex flex-wrap gap-4 mb-6">
           <TextField
             label="Client"

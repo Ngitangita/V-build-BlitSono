@@ -24,10 +24,12 @@ function AuthAdmin({ children }: AuthAdminProps) {
 }
 
 const routes = {
-  "/admin": "Admin Dashboard",
-  "/admin/admin-catalogues": "Gestion des catalogues",
+  "/admin": "Tableau de bord Admin",
+  "/admin/admin-catalogues": "Gestion des produits",
   "/admin/admin-category": "Gestion des catégories ",
-  "/admin/admin-reservations": "Gestion des réservations",
+  "/admin/admin-packs": "Gestion des packs ",
+  "/admin/admin-bundle-product": "Gestion des packs + produits ",
+  "/admin/admin-reservations": "Gestion des Réservations",
 } as const;
 
 function ProtectedLayout() {

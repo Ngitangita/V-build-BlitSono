@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import axiosClient from "../../conf/axiosClient";
-import type { Reservation } from "../../types/types";
 import { Link } from "react-router-dom";
-import ContactButton from './../../components/clientHome/ContactButton';
+import axiosClient from "../../conf/axiosClient";
+import type { Reservation } from "../../types/user";
+import ContactButton from "../../components/clientHome/ContactButton";
+import AdminReservationDetail from "../admin/AdminReservationDetail";
 import {
   FaCalendarCheck,
   FaHeadphones,
@@ -11,25 +12,33 @@ import {
   FaFileAlt,
   FaCreditCard,
 } from "react-icons/fa";
+import { MdVisibility } from "react-icons/md";
+import dayjs from "dayjs";
+import "dayjs/locale/fr";
+dayjs.locale("fr");
 
 export default function EspaceClient() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [detail, setDetail] = useState<Reservation | null>(null);
 
   useEffect(() => {
     axiosClient
-      .get("/api/user/reservations", { withCredentials: true })
+      .get<Reservation[]>("/reservations")
       .then((resp) => setReservations(resp.data))
       .catch(console.error);
   }, []);
-
-  const joinAndTruncate = (items: string[]) => {
-    const joined = items.join(", ");
-    const words = joined.split(" ");
-    return words.length > 15 ? words.slice(0, 15).join(" ") + "…" : joined;
+  
+  const fetchById = async (id: number) => {
+    try {
+      const res = await axiosClient.get<Reservation>(`/reservations/${id}`);
+      setDetail(res.data);
+    } catch (err) {
+      console.error("Erreur récupération réservation :", err);
+    }
   };
-
-  const getReservationIcon = (statut: Reservation["statut"]) =>
-    statut === "confirmée" ? (
+  
+  const getReservationIcon = (status: Reservation["status"]) =>
+    status === "confirmed" ? (
       <FaCalendarCheck color="green" />
     ) : (
       <FaCalendarAlt color="#f59e0b" />
@@ -37,9 +46,15 @@ export default function EspaceClient() {
 
   const hasReservations = reservations.length > 0;
 
+  const combineEventDateTime = (eventDate: string, eventTime: string) => {
+    const [hour, minute, second] = eventTime.split(":").map(Number);
+    return dayjs(eventDate).hour(hour).minute(minute).second(second);
+  };
+
   return (
     <div className="text-[#575756]">
       <title>Espace Client | Blit Sono</title>
+
       <section className="bgImageReservation">
         <div className="bg-gradient-to-r from-[#1E2939]/85 via-[#1E2939]/65 to-[#1E2939] text-white w-full flex flex-col px-4 py-8 pl-20 pt-20">
           <h1 className="text-3xl max-w-full sm:max-w-lg lg:max-w-xl xl:max-w-2xl font-extrabold mb-4 flex gap-2">
@@ -86,7 +101,6 @@ export default function EspaceClient() {
                     "Date",
                     "Heure",
                     "Durée",
-                    "Matériel",
                     "Lieu",
                     "Statut",
                     "Prix est.",
@@ -95,7 +109,7 @@ export default function EspaceClient() {
                   ].map((h) => (
                     <th
                       key={h}
-                      className="p-2 sm:p-3 md:p-4 text-center text-xs sm:text-sm md:text-base lg:text-lg font-medium whitespace-normal md:whitespace-nowrap"
+                      className="px-4 py-2 text-center text-xs sm:text-sm md:text-base lg:text-lg font-medium whitespace-normal md:whitespace-nowrap"
                     >
                       {h}
                     </th>
@@ -104,69 +118,54 @@ export default function EspaceClient() {
               </thead>
               <tbody>
                 {reservations.map((r) => (
-                  <tr key={r.id} className="even:bg-gray-50 text-center">
-                 
-                    <td className="p-2 sm:p-3 md:p-4 text-xs sm:text-sm md:text-base">
-                      {r.date}
-                    </td>
-                    <td className="p-2 sm:p-3 md:p-4 text-xs sm:text-sm md:text-base">
-                      {r.heure}
-                    </td>
-                    <td className="p-2 sm:p-3 md:p-4 text-xs sm:text-sm md:text-base">
-                      {r.dureeHeure} h
-                    </td>
-                    <td className="p-2 sm:p-3 md:p-4 text-xs sm:text-sm md:text-base w-32 sm:w-40 md:w-56 lg:w-72 xl:w-80 2xl:w-96 overflow-hidden text-ellipsis">
-                      {joinAndTruncate(r.materiel)}
-                    </td>
-                    <td className="p-2 sm:p-3 md:p-4 text-xs sm:text-sm md:text-base">
-                      {r.lieu}
-                    </td>
+                  <tr key={r.id_reservation} className="even:bg-gray-50 text-center">
+                    <td className="px-4 py-2">
+                    {combineEventDateTime(r.event_date, r.event_time).format(
+                      "DD/MM/YYYY HH:mm"
+                    )}
+                  </td>
+                    <td className="px-4 py-2">{r.event_time}</td>
+                    <td className="px-4 py-2">{r.duration_hours} h</td>
+                    <td className="px-4 py-2">{r.location}</td>
                     <td
-                      className={`p-2 sm:p-3 md:p-4 font-semibold text-xs sm:text-sm md:text-base ${
-                        r.statut === "confirmée"
-                          ? "text-green-600"
-                          : "text-yellow-600"
+                      className={`px-4 py-2 font-semibold flex flex-row items-center ${
+                        r.status === "confirmed" ? "text-green-600" : "text-yellow-600"
                       }`}
                     >
-                      {getReservationIcon(r.statut)}
-                      <span className="ml-1">{r.statut}</span>
+                      {getReservationIcon(r.status)}
+                      <span className="ml-1">{r.status}</span>
                     </td>
-                    <td className="p-2 sm:p-3 md:p-4 text-xs sm:text-sm md:text-base">
-                      {r.prixEstime.toLocaleString()} Ar
+                    <td className="px-4 py-2">{r.estimated_price?.toLocaleString()} Ar</td>
+                    <td className="px-4 py-2">
+                      {r.final_price ? `${r.final_price.toLocaleString()} Ar` : "—"}
                     </td>
-                    <td className="p-2 sm:p-3 md:p-4 text-xs sm:text-sm md:text-base">
-                      {r.prixFinal ? `${r.prixFinal.toLocaleString()} Ar` : "—"}
-                    </td>
-                    <td className="p-2 sm:p-3 md:p-4 flex justify-center space-x-1 sm:space-x-2">
+                    <td className="px-4 py-2 flex justify-center space-x-1 sm:space-x-2">
+                      <button
+                        onClick={() => r.id_reservation && fetchById(r.id_reservation)}
+                        className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded cursor-pointer"
+                      >
+                        <MdVisibility />
+                      </button>
                       <Link
-                        to={`/devis/${r.id}`}
+                        to={`/devis/${r.id_reservation}`}
                         className="p-1.5 sm:p-2 text-white rounded bg-[#18769C] hover:bg-[#0f5a70]"
                         title="Voir Devis"
                       >
-                        <FaCalendarAlt
-                          size={16}
-                          className="sm:size-18 md:size-20"
-                        />
+                        <FaCalendarAlt size={16} />
                       </Link>
                       <Link
-                        to={`/facture/${r.id}`}
+                        to={`/facture/${r.id_reservation}`}
                         className="p-1.5 sm:p-2 text-white rounded bg-[#18769C] hover:bg-[#0f5a70]"
                         title="Voir Facture"
                       >
-                        <FaFileAlt
-                          size={16}
-                          className="sm:size-18 md:size-20"
-                        />
+                        <FaFileAlt size={16} />
                       </Link>
                       <Link
-                        to={`/paiement/${r.id}`}
+                        to={`/paiement/${r.id_reservation}`}
                         className="p-1.5 sm:p-2 text-white rounded bg-[#18769C] hover:bg-[#0f5a70]"
                         title="Voir Paiement"
                       >
-                        <FaCreditCard
-                          size={16}
-                          className="sm:size-18 md:size-20"
-                        />
+                        <FaCreditCard size={16} />
                       </Link>
                     </td>
                   </tr>
@@ -177,6 +176,7 @@ export default function EspaceClient() {
         )}
       </div>
 
+      {/* Remerciement */}
       {hasReservations && (
         <div className="text-[#18769C] py-10 w-full flex flex-col pr-30 items-end">
           <h1 className="text-3xl font-extrabold mb-4 flex items-center gap-1 w-full sm:w-[500px]">
@@ -185,11 +185,17 @@ export default function EspaceClient() {
           <p className="w-[500px] text-lg italic mb-6 text-start flex items-center border-l-4 border-[#18769C] pl-4">
             Nous sommes ravis de vous accompagner dans la réussite de votre
             événement avec du matériel audio et lumière professionnel, fiable et
-            de qualité… et nous restons à votre écoute à chaque étape, pour
-            adapter nos prestations à vos besoins spécifiques et garantir une
-            expérience sans stress, du début à la fin.
+            de qualité… et nous restons à votre écoute à chaque étape.
           </p>
         </div>
+      )}
+
+      {/* Détail d'une réservation */}
+      {detail && (
+        <AdminReservationDetail
+          reservation={detail}
+          onClose={() => setDetail(null)}
+        />
       )}
     </div>
   );

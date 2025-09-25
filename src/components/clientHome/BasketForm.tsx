@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { MdDelete } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { useCartStore } from "../../stores/useCartStore";
@@ -7,12 +7,14 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import axiosClient from "../../conf/axiosClient";
 import type { CartItem } from "../../types/cart";
+import type { UserType } from "../../types/user";
 
 export type BasketFormProps = {
   items: CartItem[];
   total: number;
   remove: (id: number) => void;
-  updateQuantity: (id: number, quantity: number) => void;
+  updateQuantity: (id: number, delta: number) => void;
+  availabilityErrors?: Record<number, string>; 
 };
 
 export type UnavailableItem = {
@@ -20,23 +22,19 @@ export type UnavailableItem = {
   message: string;
 };
 
-export type User = {
-  id: number;
-  name: string;
-  email: string;
-};
-
 export default function BasketForm({
   items,
   total,
   remove,
   updateQuantity,
+  availabilityErrors,
 }: BasketFormProps) {
   const clearCart = useCartStore((s) => s.clear);
-  const currentUser = useAuthStore((s) => s.user) as User | null;
+  const totalItems = useCartStore((s) => s.totalCount());
+  const currentUser = useAuthStore((s) => s.user) as UserType | null;
   const isAuthenticated = !!currentUser;
   const navigate = useNavigate();
-  const totalItems = useCartStore((s) => s.totalCount());
+
   const [eventDate, setEventDate] = useState("");
   const [eventTime, setEventTime] = useState("");
   const [location, setLocation] = useState("");
@@ -45,42 +43,35 @@ export default function BasketForm({
   const [paymentType, setPaymentType] = useState<"complet" | "partiel">(
     "complet"
   );
+
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [availabilityErrors, setAvailabilityErrors] = useState<
-    Record<number, string>
-  >({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const savedData = localStorage.getItem("reservationForm");
     if (savedData) {
-      const {
+      const data = JSON.parse(savedData);
+      setEventDate(data.eventDate || "");
+      setEventTime(data.eventTime || "");
+      setLocation(data.location || "");
+      setDuration(data.duration || "");
+      setDayNight(data.dayNight || "jour");
+      setPaymentType(data.paymentType || "complet");
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(
+      "reservationForm",
+      JSON.stringify({
         eventDate,
         eventTime,
         location,
         duration,
         dayNight,
         paymentType,
-      } = JSON.parse(savedData);
-      setEventDate(eventDate || "");
-      setEventTime(eventTime || "");
-      setLocation(location || "");
-      setDuration(duration || "");
-      setDayNight(dayNight || "jour");
-      setPaymentType(paymentType || "complet");
-    }
-  }, []);
-
-  useEffect(() => {
-    const formData = {
-      eventDate,
-      eventTime,
-      location,
-      duration,
-      dayNight,
-      paymentType,
-    };
-    localStorage.setItem("reservationForm", JSON.stringify(formData));
+      })
+    );
   }, [eventDate, eventTime, location, duration, dayNight, paymentType]);
 
   const validate = () => {
@@ -92,18 +83,17 @@ export default function BasketForm({
     return errs;
   };
 
-  const estimatePrice = (items: CartItem[]): number =>
-    items.reduce((acc, i) => acc + i.price * i.quantity, 0);
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (items.length === 0) {
-      toast.info("Votre panier est vide.");
-      return;
-    }
+
     if (!isAuthenticated) {
       toast.warning("Veuillez vous connecter avant de finaliser");
       navigate("/sign-in");
+      return;
+    }
+
+    if (items.length === 0) {
+      toast.info("Votre panier est vide.");
       return;
     }
 
@@ -118,55 +108,39 @@ export default function BasketForm({
     setIsSubmitting(true);
 
     const payload = {
-      user_id: currentUser!.id,
-      date_evenement: eventDate,
-      heure_evenement: eventTime,
-      duree_heure: duration,
-      lieu: location,
-      statut: "en_attente",
-      prix_estime: estimatePrice(items),
-      etat_commande: paymentType === "complet" ? "devis_envoye" : "non_emis",
-      reservation_materiels: items
+      event_date: eventDate,
+      event_time: eventTime,
+      duration_hours: duration,
+      location,
+      products: items
         .filter((i) => i.type === "materiel")
-        .map((i) => ({ materiel_id: i.id, quantite: i.quantity })),
-      reservation_packs: items
+        .map((i) => ({ id_product: i.id, quantity: i.quantity })),
+      bundles: items
         .filter((i) => i.type === "pack")
-        .map((i) => ({ pack_id: i.id, quantite: i.quantity })),
-      dayNight,
-      paymentType,
+        .map((i) => ({ id_bundle: i.id, quantity: i.quantity })),
     };
 
     try {
-      const res = await axiosClient.post("/api/reservations", payload, {
+      await axiosClient.post("/reservations", payload, {
         headers: { "Content-Type": "application/json" },
-        withCredentials: true,
       });
-
-      if (res.status === 409) {
-        const errsMap: Record<number, string> = {};
-        (res.data.unavailable as UnavailableItem[]).forEach((u) => {
-          errsMap[u.id] = u.message;
-        });
-        setAvailabilityErrors(errsMap);
-        toast.error(
-          "Certains articles ne sont pas disponibles pour la période sélectionnée."
-        );
-        return;
-      }
 
       toast.success("Réservation enregistrée !");
       clearCart();
-      setAvailabilityErrors({});
       localStorage.removeItem("reservationForm");
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
-        if (err.response?.status === 409) {
+        if (
+          err.response?.status === 409 &&
+          Array.isArray(err.response.data.unavailable)
+        ) {
           const errsMap: Record<number, string> = {};
           (err.response.data.unavailable as UnavailableItem[]).forEach((u) => {
             errsMap[u.id] = u.message;
           });
-          setAvailabilityErrors(errsMap);
-          toast.error("Conflit de réservation détecté.");
+          toast.error(
+            "Certains articles sont indisponibles ou en quantité insuffisante."
+          );
         } else {
           toast.error(
             err.response?.data?.message ?? "Erreur lors de la réservation"
@@ -203,7 +177,6 @@ export default function BasketForm({
             <p className="text-red-500 text-sm">{errors.eventDate}</p>
           )}
         </div>
-
         <div>
           <label>Heure de début</label>
           <input
@@ -216,7 +189,6 @@ export default function BasketForm({
             <p className="text-red-500 text-sm">{errors.eventTime}</p>
           )}
         </div>
-
         <div>
           <label>Lieu</label>
           <input
@@ -230,7 +202,6 @@ export default function BasketForm({
             <p className="text-red-500 text-sm">{errors.location}</p>
           )}
         </div>
-
         <div>
           <label>Durée (heures)</label>
           <input
@@ -245,7 +216,6 @@ export default function BasketForm({
             <p className="text-red-500 text-sm">{errors.duration}</p>
           )}
         </div>
-
         <div>
           <p>Jour ou nuit ?</p>
           <label>
@@ -269,7 +239,6 @@ export default function BasketForm({
             Nuit
           </label>
         </div>
-
         <div>
           <p>Paiement :</p>
           <label>
@@ -303,7 +272,7 @@ export default function BasketForm({
           >
             <div className="flex items-center space-x-4">
               <img
-                src={item.image_url}
+                src={item.image_url?.trim() || "/default-image.jpg"}
                 alt={item.name}
                 className="w-16 h-16 object-cover rounded"
               />
@@ -337,11 +306,9 @@ export default function BasketForm({
             >
               <MdDelete size={20} />
             </button>
-            {availabilityErrors[item.id] && (
               <p className="text-red-600 text-sm mt-1">
-                {availabilityErrors[item.id]}
+                {availabilityErrors?.[item.id]}
               </p>
-            )}
           </div>
         ))}
 

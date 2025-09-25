@@ -15,7 +15,6 @@ import { SignUp } from "../pages/auth/SignUp";
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import AdminCategory from "../pages/admin/AdminCategory";
 import AdminCatalogues from "../pages/admin/AdminCatalogues";
-import AdminReservationDetail from "../pages/admin/AdminReservationDetail";
 import AdminReservations from "../pages/admin/AdminReservations";
 import PublicNotFound from "../pages/not-found/PublicNotFound";
 import ProtectedNotFound from "../pages/not-found/ProtectedNotFound";
@@ -23,6 +22,8 @@ import ForbiddenPage from "../pages/not-found/ForbiddenPage";
 import ProtectedClient from "../pages/not-found/ProtectedClient";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import AdminPacks from './../pages/admin/AdminPacks';
+import AdminBundleProduct from './../pages/admin/AdminBundleProduct';
 
 const router = createBrowserRouter([
   {
@@ -32,8 +33,9 @@ const router = createBrowserRouter([
       { index: true, element: <AdminDashboard /> },
       { path: "admin-catalogues", element: <AdminCatalogues /> },
       { path: "admin-category", element: <AdminCategory /> },
+      { path: "admin-packs", element: <AdminPacks /> },
+      { path: "admin-bundle-product", element: <AdminBundleProduct /> },
       { path: "admin-reservations", element: <AdminReservations /> },
-      { path: "admin-reservations-detail/:id", element: <AdminReservationDetail /> },
       { path: "*", element: <ProtectedNotFound /> },
     ],
   },

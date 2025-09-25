@@ -6,6 +6,7 @@ import {
   MdLibraryBooks,
   MdCategory,
   MdAdminPanelSettings,
+  MdInventory,
 } from "react-icons/md";
 import { RiCloseLine } from "react-icons/ri";
 import { FaAngleRight } from "react-icons/fa";
@@ -25,6 +26,18 @@ const menuItems: MenuItem[] = [
     title: "Admin Category",
     icon: <MdCategory />,
     path: "/admin/admin-category",
+    subItems: [],
+  },
+  {
+    title: "Admin Packs",
+    icon: <MdInventory />,
+    path: "/admin/admin-packs",
+    subItems: [],
+  },
+   {
+    title: "Admin Packs + Produit",
+    icon: <MdInventory />,
+    path: "/admin/admin-bundle-product",
     subItems: [],
   },
   {

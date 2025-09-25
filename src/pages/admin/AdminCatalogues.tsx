@@ -16,9 +16,8 @@ function AdminCatalogues() {
   const [showForm, setShowForm] = useState(false);
   const [, setCategories] = useState<Category[]>([]);
   const [detail, setDetail] = useState<MaterielsType | null>(null);
-  const [open, setOpen] = useState(false); // filtre mobile
+  const [open, setOpen] = useState(false); 
 
-  // Search states
   const [searchName, setSearchName] = useState("");
   const [searchPrix, setSearchPrix] = useState("");
   const [searchStockTotal, setSearchStockTotal] = useState("");

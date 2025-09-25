@@ -1,4 +1,6 @@
 
+import type { MaterielsType, PacksType } from "./types";
+
 export type FormValues = {
   prenom: string;
   nom: string;
@@ -57,4 +59,20 @@ export type AuthStore = {
   setToken: (token: string | null) => void;
   setUser: (user: UserType | null) => void; 
   logout: () => void;
+};
+
+
+export type Reservation = {
+  id_reservation: number; 
+  user?: UserType;
+  event_date: string;      
+  event_time: string;      
+  duration_hours: number;  
+  location?: string;
+  status: "pending" | "validated" | "confirmed" | "cancelled";
+  estimated_price?: number;
+  final_price?: number;
+  products?: MaterielsType[];
+  bundles?: PacksType[];
+  day_night?: "jour" | "nuit";
 };
