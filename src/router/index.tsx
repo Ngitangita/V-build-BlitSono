@@ -24,6 +24,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import AdminPacks from './../pages/admin/AdminPacks';
 import AdminBundleProduct from './../pages/admin/AdminBundleProduct';
+import AdminInventory from './../pages/admin/AdminInventory';
 
 const router = createBrowserRouter([
   {
@@ -34,6 +35,7 @@ const router = createBrowserRouter([
       { path: "admin-catalogues", element: <AdminCatalogues /> },
       { path: "admin-category", element: <AdminCategory /> },
       { path: "admin-packs", element: <AdminPacks /> },
+      { path: "admin-inventory", element: <AdminInventory /> },
       { path: "admin-bundle-product", element: <AdminBundleProduct /> },
       { path: "admin-reservations", element: <AdminReservations /> },
       { path: "*", element: <ProtectedNotFound /> },

@@ -9,7 +9,7 @@ import {
   MdInventory,
 } from "react-icons/md";
 import { RiCloseLine } from "react-icons/ri";
-import { FaAngleRight } from "react-icons/fa";
+import { FaAngleRight, FaBoxes } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../stores/useAuthStore";
 import type { MenuItem, SubItem } from "../../types/types";
@@ -34,6 +34,12 @@ const menuItems: MenuItem[] = [
     path: "/admin/admin-packs",
     subItems: [],
   },
+  {
+  title: "Admin Inventaire",
+  icon: <FaBoxes />,
+  path: "/admin/admin-inventory",
+  subItems: [],
+},
    {
     title: "Admin Packs + Produit",
     icon: <MdInventory />,

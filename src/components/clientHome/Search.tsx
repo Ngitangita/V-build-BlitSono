@@ -1,36 +1,41 @@
-import React, { useState } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import { MdClose } from "react-icons/md";
 
-export default function Search(){
+export default function Search() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
-
   const initialQuery = searchParams.get("q") ?? "";
-  const [q, setQ] = useState<string>(initialQuery);
+  const [q, setQ] = useState(initialQuery);
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (q.trim()) {
-      setSearchParams({ q: q.trim() });
-      if (window.location.pathname !== "/catalogue") {
-        navigate("/catalogue");
-      }
+  useEffect(() => {
+    const query = q.trim();
+    if (query) {
+      setSearchParams({ q: query });
     } else {
-      const newParams = new URLSearchParams(searchParams);
-      newParams.delete("q");
-      setSearchParams(newParams);
+      searchParams.delete("q");
+      setSearchParams(searchParams);
     }
-  };
+  }, [q]);
 
   return (
-    <form onSubmit={onSubmit} className="w-full">
+    <div className="relative w-full">
       <input
         type="text"
         value={q}
-        onChange={(e) => setQ(e.currentTarget.value)}
-        placeholder="Que cherchez-vous ?"
-        className="w-full bg-transparent placeholder:text-slate-400 text-slate-100 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+        onChange={(e) => setQ(e.target.value)}
+        placeholder="Cherche dans le Catalogue/Packs"
+        className="w-full bg-transparent placeholder:text-slate-400 text-slate-100 text-sm border border-slate-200 rounded-md pl-3 pr-10 py-2 transition duration-300 focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
       />
-    </form>
+
+      {q && (
+        <button
+          type="button"
+          onClick={() => setQ("")}
+          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-red-500 cursor-pointer"
+        >
+          <MdClose size={18} />
+        </button>
+      )}
+    </div>
   );
 }

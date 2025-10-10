@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { MdDelete } from "react-icons/md";
-import { useNavigate } from "react-router-dom";
-import { useCartStore } from "../../stores/useCartStore";
-import { useAuthStore } from "../../stores/useAuthStore";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import axiosClient from "../../conf/axiosClient";
+import { useCartStore } from "../../stores/useCartStore";
+import { useAuthStore } from "../../stores/useAuthStore";
 import type { CartItem } from "../../types/cart";
 import type { UserType } from "../../types/user";
 
@@ -14,12 +14,7 @@ export type BasketFormProps = {
   total: number;
   remove: (id: number) => void;
   updateQuantity: (id: number, delta: number) => void;
-  availabilityErrors?: Record<number, string>; 
-};
-
-export type UnavailableItem = {
-  id: number;
-  message: string;
+  availabilityErrors?: Record<number, string>;
 };
 
 export default function BasketForm({
@@ -27,91 +22,49 @@ export default function BasketForm({
   total,
   remove,
   updateQuantity,
-  availabilityErrors,
 }: BasketFormProps) {
   const clearCart = useCartStore((s) => s.clear);
   const totalItems = useCartStore((s) => s.totalCount());
-  const currentUser = useAuthStore((s) => s.user) as UserType | null;
-  const isAuthenticated = !!currentUser;
+  const user = useAuthStore((s) => s.user) as UserType | null;
   const navigate = useNavigate();
 
-  const [eventDate, setEventDate] = useState("");
-  const [eventTime, setEventTime] = useState("");
-  const [location, setLocation] = useState("");
-  const [duration, setDuration] = useState<number | "">("");
-  const [dayNight, setDayNight] = useState<"jour" | "nuit">("jour");
-  const [paymentType, setPaymentType] = useState<"complet" | "partiel">(
-    "complet"
-  );
-
+  const [formData, setFormData] = useState({
+    eventDate: "",
+    eventTime: "",
+    location: "",
+    duration: "",
+    dayNight: "jour",
+    paymentType: "complet",
+  });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [countdown, setCountdown] = useState<number | null>(null);
+const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
-    const savedData = localStorage.getItem("reservationForm");
-    if (savedData) {
-      const data = JSON.parse(savedData);
-      setEventDate(data.eventDate || "");
-      setEventTime(data.eventTime || "");
-      setLocation(data.location || "");
-      setDuration(data.duration || "");
-      setDayNight(data.dayNight || "jour");
-      setPaymentType(data.paymentType || "complet");
-    }
+    const saved = localStorage.getItem("reservationForm");
+    if (saved) setFormData(JSON.parse(saved));
   }, []);
-
   useEffect(() => {
-    localStorage.setItem(
-      "reservationForm",
-      JSON.stringify({
-        eventDate,
-        eventTime,
-        location,
-        duration,
-        dayNight,
-        paymentType,
-      })
-    );
-  }, [eventDate, eventTime, location, duration, dayNight, paymentType]);
+    localStorage.setItem("reservationForm", JSON.stringify(formData));
+  }, [formData]);
 
   const validate = () => {
-    const errs: Record<string, string> = {};
-    if (!eventDate) errs.eventDate = "Veuillez choisir une date.";
-    if (!eventTime) errs.eventTime = "Veuillez sélectionner une heure.";
-    if (!location.trim()) errs.location = "Veuillez indiquer un lieu.";
-    if (!duration || duration < 1) errs.duration = "Durée invalide.";
-    return errs;
+    const e: Record<string, string> = {};
+    if (!formData.eventDate) e.eventDate = "Date requise.";
+    if (!formData.eventTime) e.eventTime = "Heure requise.";
+    if (!formData.location.trim()) e.location = "Lieu requis.";
+    if (!formData.duration || Number(formData.duration) < 1)
+      e.duration = "Durée invalide.";
+    return e;
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!isAuthenticated) {
-      toast.warning("Veuillez vous connecter avant de finaliser");
-      navigate("/sign-in");
-      return;
-    }
-
-    if (items.length === 0) {
-      toast.info("Votre panier est vide.");
-      return;
-    }
-
-    const errs = validate();
-    if (Object.keys(errs).length > 0) {
-      setErrors(errs);
-      toast.error("Veuillez corriger les erreurs dans le formulaire.");
-      return;
-    }
-
-    setErrors({});
-    setIsSubmitting(true);
-
+  const sendReservation = async () => {
     const payload = {
-      event_date: eventDate,
-      event_time: eventTime,
-      duration_hours: duration,
-      location,
+      event_date: formData.eventDate,
+      event_time: formData.eventTime,
+      duration_hours: formData.duration,
+      location: formData.location,
       products: items
         .filter((i) => i.type === "materiel")
         .map((i) => ({ id_product: i.id, quantity: i.quantity })),
@@ -124,168 +77,146 @@ export default function BasketForm({
       await axiosClient.post("/reservations", payload, {
         headers: { "Content-Type": "application/json" },
       });
-
       toast.success("Réservation enregistrée !");
       clearCart();
       localStorage.removeItem("reservationForm");
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
-        if (
-          err.response?.status === 409 &&
-          Array.isArray(err.response.data.unavailable)
-        ) {
-          const errsMap: Record<number, string> = {};
-          (err.response.data.unavailable as UnavailableItem[]).forEach((u) => {
-            errsMap[u.id] = u.message;
-          });
-          toast.error(
-            "Certains articles sont indisponibles ou en quantité insuffisante."
-          );
-        } else {
-          toast.error(
-            err.response?.data?.message ?? "Erreur lors de la réservation"
-          );
-        }
-      } else {
-        toast.error("Erreur inconnue");
-      }
+        const msg =
+          err.response?.data?.message ||
+          "Erreur lors de la réservation.";
+        toast.error(msg);
+      } else toast.error("Erreur inconnue.");
     } finally {
       setIsSubmitting(false);
+      setCountdown(null);
+    }
+  };
+  
+  const startCountdown = () => {
+    if (!user) {
+      toast.warning("Veuillez vous connecter pour continuer.");
+      navigate("/sign-in");
+      return;
+    }
+    if (items.length === 0) {
+      toast.info("Votre panier est vide.");
+      return;
+    }
+    const errs = validate();
+    if (Object.keys(errs).length) {
+      setErrors(errs);
+      toast.error("Corrigez les erreurs avant de soumettre.");
+      return;
+    }
+    setErrors({});
+    setCountdown(5);
+    setIsSubmitting(true);
+    countdownRef.current = setInterval(() => {
+      setCountdown((p) => {
+        if (p !== null && p <= 1) {
+          clearInterval(countdownRef.current!);
+          sendReservation();
+          return null;
+        }
+        return p ? p - 1 : null;
+      });
+    }, 1000);
+  };
+
+  const cancelCountdown = () => {
+    if (countdownRef.current) {
+      clearInterval(countdownRef.current);
+      setCountdown(null);
+      setIsSubmitting(false);
+      toast.info("Envoi annulé.");
     }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="bg-white rounded-lg p-6 flex flex-col gap-6 w-[750px]"
-    >
+    <form className="bg-white rounded-lg p-6 flex flex-col gap-6 w-[750px]">
       <p className="text-[#18769C]">
-        Veuillez saisir les informations de l'événement (date, heure, lieu,
-        durée, jour/nuit, paiement).
+        Remplissez les informations de l'événement puis vérifiez votre panier.
       </p>
 
       <div className="flex flex-row gap-4 flex-wrap items-center">
-        <div>
-          <label>Date de l'événement</label>
-          <input
-            type="date"
-            value={eventDate}
-            onChange={(e) => setEventDate(e.target.value)}
-            className="w-full border p-2 rounded border-[#18769C]/50 outline-[#18769C]"
-          />
-          {errors.eventDate && (
-            <p className="text-red-500 text-sm">{errors.eventDate}</p>
-          )}
-        </div>
-        <div>
-          <label>Heure de début</label>
-          <input
-            type="time"
-            value={eventTime}
-            onChange={(e) => setEventTime(e.target.value)}
-            className="w-full border p-2 rounded border-[#18769C]/50 outline-[#18769C]"
-          />
-          {errors.eventTime && (
-            <p className="text-red-500 text-sm">{errors.eventTime}</p>
-          )}
-        </div>
-        <div>
-          <label>Lieu</label>
-          <input
-            type="text"
-            value={location}
-            placeholder="Indiquez le lieu de l'événement"
-            onChange={(e) => setLocation(e.target.value)}
-            className="w-full border p-2 rounded border-[#18769C]/50 outline-[#18769C]"
-          />
-          {errors.location && (
-            <p className="text-red-500 text-sm">{errors.location}</p>
-          )}
-        </div>
-        <div>
-          <label>Durée (heures)</label>
-          <input
-            type="number"
-            placeholder="Durée en heures"
-            value={duration}
-            min={1}
-            onChange={(e) => setDuration(Number(e.target.value))}
-            className="w-full border p-2 rounded border-[#18769C]/50 outline-[#18769C]"
-          />
-          {errors.duration && (
-            <p className="text-red-500 text-sm">{errors.duration}</p>
-          )}
-        </div>
-        <div>
-          <p>Jour ou nuit ?</p>
-          <label>
-            <input
-              type="radio"
-              name="dayNight"
-              checked={dayNight === "jour"}
-              onChange={() => setDayNight("jour")}
-              className="border-[#18769C]/50 outline-[#18769C] cursor-pointer"
-            />{" "}
-            Jour
-          </label>
-          <label className="ml-4">
-            <input
-              type="radio"
-              name="dayNight"
-              checked={dayNight === "nuit"}
-              onChange={() => setDayNight("nuit")}
-              className="border-[#18769C]/50 outline-[#18769C] cursor-pointer"
-            />{" "}
-            Nuit
-          </label>
-        </div>
-        <div>
-          <p>Paiement :</p>
-          <label>
-            <input
-              type="radio"
-              name="payment"
-              checked={paymentType === "complet"}
-              onChange={() => setPaymentType("complet")}
-              className="border-[#18769C]/50 outline-[#18769C] cursor-pointer"
-            />{" "}
-            Complet
-          </label>
-          <label className="ml-4">
-            <input
-              type="radio"
-              name="payment"
-              checked={paymentType === "partiel"}
-              onChange={() => setPaymentType("partiel")}
-              className="border-[#18769C]/50 outline-[#18769C] cursor-pointer"
-            />{" "}
-            Partiel
-          </label>
-        </div>
+        <Input
+          label="Date"
+          type="date"
+          value={formData.eventDate}
+          onChange={(v) => setFormData((d) => ({ ...d, eventDate: v }))}
+          error={errors.eventDate}
+        />
+        <Input
+          label="Heure"
+          type="time"
+          value={formData.eventTime}
+          onChange={(v) => setFormData((d) => ({ ...d, eventTime: v }))}
+          error={errors.eventTime}
+        />
+        <Input
+          label="Lieu"
+          type="text"
+          value={formData.location}
+          onChange={(v) => setFormData((d) => ({ ...d, location: v }))}
+          placeholder="Lieu de l'événement"
+          error={errors.location}
+        />
+        <Input
+          label="Durée (heures)"
+          type="number"
+          value={formData.duration}
+          onChange={(v) => setFormData((d) => ({ ...d, duration: v }))}
+          min={1}
+          error={errors.duration}
+        />
+      </div>
+
+      <div className="flex gap-8 flex-wrap">
+        <RadioGroup
+          label="Moment"
+          name="dayNight"
+          options={[
+            { value: "jour", label: "Jour" },
+            { value: "nuit", label: "Nuit" },
+          ]}
+          selected={formData.dayNight}
+          onChange={(v) => setFormData((d) => ({ ...d, dayNight: v }))}
+        />
+        <RadioGroup
+          label="Paiement"
+          name="payment"
+          options={[
+            { value: "complet", label: "Complet" },
+            { value: "partiel", label: "Partiel" },
+          ]}
+          selected={formData.paymentType}
+          onChange={(v) => setFormData((d) => ({ ...d, paymentType: v }))}
+        />
       </div>
 
       <div className="flex flex-col gap-4">
         {items.map((item) => (
           <div
             key={item.id}
-            className="flex justify-between items-center py-4 border-b border-[#18769C]/50"
+            className="flex justify-between items-center py-4 border-b border-[#18769C]/40"
           >
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center gap-3">
               <img
-                src={item.image_url?.trim() || "/default-image.jpg"}
+                src={item.image_url || "/default-image.jpg"}
                 alt={item.name}
                 className="w-16 h-16 object-cover rounded"
               />
               <div>
                 <p className="font-semibold">{item.name}</p>
-                <p className="text-gray-600">Prix : {item.price} Ar</p>
+                <p className="text-gray-600">{item.price} Ar</p>
               </div>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => updateQuantity(item.id, -1)}
-                className="px-2 py-1 cursor-pointer bg-gray-200 rounded"
+                className="px-2 bg-gray-200 rounded"
               >
                 -
               </button>
@@ -293,7 +224,7 @@ export default function BasketForm({
               <button
                 type="button"
                 onClick={() => updateQuantity(item.id, +1)}
-                className="px-2 py-1 cursor-pointer bg-gray-200 rounded"
+                className="px-2 bg-gray-200 rounded"
               >
                 +
               </button>
@@ -302,29 +233,109 @@ export default function BasketForm({
             <button
               type="button"
               onClick={() => remove(item.id)}
-              className="p-1 text-red-600 hover:text-red-800 cursor-pointer"
+              className="p-1 text-red-600 hover:text-red-800"
             >
               <MdDelete size={20} />
             </button>
-              <p className="text-red-600 text-sm mt-1">
-                {availabilityErrors?.[item.id]}
-              </p>
           </div>
         ))}
-
         <div className="text-right font-bold text-xl">
-          Total à payer : {total} Ar ({totalItems} produit
+          Total : {total} Ar ({totalItems} article
           {totalItems > 1 ? "s" : ""})
         </div>
       </div>
 
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="p-2 cursor-pointer rounded hover:bg-gradient-to-l hover:from-[#18769C] hover:to-[#18769C]/20 bg-gradient-to-r from-[#18769C] to-[#18769C]/20 text-xl text-white"
-      >
-        {isSubmitting ? "Envoi…" : "Envoyer la demande"}
-      </button>
+      <div className="flex gap-4">
+        <button
+          type="button"
+          disabled={isSubmitting}
+          onClick={startCountdown}
+          className="p-2 flex-1 cursor-pointer rounded hover:bg-gradient-to-l hover:from-[#18769C] hover:to-[#18769C]/20 
+          bg-gradient-to-r from-[#18769C] to-[#18769C]/20 text-xl text-white"
+        >
+          {countdown
+            ? `Envoi dans ${countdown}s…`
+            : isSubmitting
+            ? "Envoi…"
+            : "Envoyer la demande"}
+        </button>
+        {countdown && (
+          <button
+            type="button"
+            onClick={cancelCountdown}
+            className="p-2 bg-red-500 text-white rounded cursor-pointer"
+          >
+            Annuler
+          </button>
+        )}
+      </div>
     </form>
+  );
+}
+
+function Input({
+  label,
+  type,
+  value,
+  onChange,
+  error,
+  placeholder,
+  min,
+}: {
+  label: string;
+  type: string;
+  value: string | number;
+  onChange: (v: string) => void;
+  error?: string;
+  placeholder?: string;
+  min?: number;
+}) {
+
+  return (
+    <div className="flex flex-col">
+      <label>{label}</label>
+      <input
+        type={type}
+        value={value}
+        min={min}
+        placeholder={placeholder}
+        onChange={(e) => onChange(e.target.value)}
+        className="border p-2 rounded border-[#18769C]/50 w-40"
+      />
+      {error && <p className="text-red-500 text-sm">{error}</p>}
+    </div>
+  );
+}
+
+function RadioGroup({
+  label,
+  name,
+  options,
+  selected,
+  onChange,
+}: {
+  label: string;
+  name: string;
+  options: { value: string; label: string }[];
+  selected: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div>
+      <p>{label}</p>
+      {options.map((opt) => (
+        <label key={opt.value} className="ml-2">
+          <input
+            type="radio"
+            name={name}
+            value={opt.value}
+            checked={selected === opt.value}
+            onChange={() => onChange(opt.value)}
+            className="cursor-pointer"
+          />{" "}
+          {opt.label}
+        </label>
+      ))}
+    </div>
   );
 }

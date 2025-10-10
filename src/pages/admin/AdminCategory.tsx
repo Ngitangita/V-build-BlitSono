@@ -89,7 +89,7 @@ function AdminCategory() {
 
   return (
     <div className="p-4 pt-14">
-      <title>Catégories Sono Pro | BlitSono</title>
+      <title>Catégories Sono Pro | BeLoyal</title>
       <div className="container border border-gray-50">
         <div className="flex flex-row flex-wrap items-start gap-2 mb-4 bg-white p-6 rounded">
           {error && <p className="text-red-500">{error}</p>}

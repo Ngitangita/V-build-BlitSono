@@ -60,7 +60,7 @@ export default function MaterielDetail() {
 
   return (
     <div>
-      <title>Détail du matériel | Blit Sono</title>
+      <title>Détail du matériel | BeLoyal</title>
       <section
         className="bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url(${mat.image_url})` }}
@@ -127,7 +127,7 @@ export default function MaterielDetail() {
       <div className="py-10 w-full flex flex-col pr-30 items-end">
         <p className="w-[500px] text-lg italic mb-6 text-start flex border-l-4 border-[#18769C] pl-4 text-[#1E2939]">
           <FaThumbsUp className="mr-2 text-6xl text-[#18769C]" /> Merci de considérer{" "}
-          {mat.name} avec BlitSono !
+          {mat.name} avec BeLoyal !
         </p>
       </div>
     </div>

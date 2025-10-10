@@ -27,7 +27,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     axiosClient
-      .get("/api/admin/reservations", { withCredentials: true })
+      .get("/reservations", { withCredentials: true })
       .then(({ data }) => {
         const list = Array.isArray(data) ? data : data.reservations || [];
         setReservations(list);
@@ -41,7 +41,7 @@ export default function AdminDashboard() {
     setProcessing(id);
     axiosClient
       .post(
-        `/api/admin/reservations/${id}/${newStatus}`,
+        `/reservations/${id}/${newStatus}`,
         {},
         { withCredentials: true }
       )

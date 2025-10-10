@@ -13,31 +13,35 @@ export type FiltersCategoryType = {
   selectedPrices: PriceRange[];
   onPricesChange: (prs: PriceRange[]) => void;
   resetAll: () => void;
-  priceRanges: PriceRange[];   
+  priceRanges: PriceRange[];
 };
 
 export default function FiltersCategory({
-  categories, 
+  categories,
   selectedCats,
   onCatsChange,
   selectedPrices,
   onPricesChange,
   resetAll,
-   priceRanges,
+  priceRanges,
 }: FiltersCategoryType) {
   const [showAllCats, setShowAllCats] = useState(false);
   const [showAllPrices, setShowAllPrices] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const toggle = <T,>(array: T[], item: T, setter: (a: T[]) => void) => {
-    setter(array.includes(item) ? array.filter(i => i !== item) : [...array, item]);
+    setter(array.includes(item) ? array.filter((i) => i !== item) : [...array, item]);
   };
 
-  const catsToShow = showAllCats ? categories : categories.slice(0, 7);
+  const filteredCategories = categories.filter((c) =>
+    c.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const catsToShow = showAllCats ? filteredCategories : filteredCategories.slice(0, 7);
   const pricesToShow = showAllPrices ? priceRanges : priceRanges.slice(0, 3);
 
   return (
-    <aside className="w-46 p-4 pb-16 lg:w-64 bg-white text-[#575756] 
-    rounded-lg max-h-[calc(100vh-2rem)] overflow-y-auto">
+    <aside className="w-46 p-4 pb-16 lg:w-64 bg-white text-[#575756] rounded-lg max-h-[calc(300vh-2rem)] overflow-y-auto">
       <h2 className="font-bold text-lg mb-4">Filtres</h2>
 
       <button
@@ -47,23 +51,35 @@ export default function FiltersCategory({
         Effacer les filtres
       </button>
 
+      <input
+        type="text"
+        placeholder="Rechercher catégorie ou prix..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="w-full py-2 mb-4 px-2 border rounded hover:border-gray-400 focus:outline-none focus:ring focus:ring-[#00B5BD]"
+      />
+
       <div className="mb-4">
         <h3 className="font-semibold mb-2">Catégorie</h3>
-        {catsToShow.map(name => (
-          <label key={name} className="flex items-center mb-1">
-            <input
-              type="checkbox"
-              className="mr-2"
-              checked={selectedCats.includes(name)}
-              onChange={() => toggle(selectedCats, name, onCatsChange)}
-            />
-            {name}
-          </label>
-        ))}
-        {categories.length > 7 && (
+        {catsToShow.length ? (
+          catsToShow.map((name) => (
+            <label key={name} className="flex items-center mb-1">
+              <input
+                type="checkbox"
+                className="mr-2"
+                checked={selectedCats.includes(name)}
+                onChange={() => toggle(selectedCats, name, onCatsChange)}
+              />
+              {name}
+            </label>
+          ))
+        ) : (
+          <p className="text-gray-400 italic">Aucun résultat</p>
+        )}
+        {filteredCategories.length > 7 && (
           <button
             className="text-[#00B5BD] text-sm mt-1 cursor-pointer"
-            onClick={() => setShowAllCats(v => !v)}
+            onClick={() => setShowAllCats((v) => !v)}
           >
             {showAllCats ? "Voir moins ▲" : "Voir plus ▼"}
           </button>
@@ -72,21 +88,25 @@ export default function FiltersCategory({
 
       <div>
         <h3 className="font-semibold mb-2">Prix</h3>
-        {pricesToShow.map(pr => (
-          <label key={pr.label} className="flex items-center mb-1">
-            <input
-              type="checkbox"
-              className="mr-2"
-              checked={selectedPrices.includes(pr)}
-              onChange={() => toggle(selectedPrices, pr, onPricesChange)}
-            />
-            {pr.label}
-          </label>
-        ))}
+        {pricesToShow.length ? (
+          pricesToShow.map((pr) => (
+            <label key={pr.label} className="flex items-center mb-1">
+              <input
+                type="checkbox"
+                className="mr-2"
+                checked={selectedPrices.includes(pr)}
+                onChange={() => toggle(selectedPrices, pr, onPricesChange)}
+              />
+              {pr.label}
+            </label>
+          ))
+        ) : (
+          <p className="text-gray-400 italic">Aucun résultat</p>
+        )}
         {priceRanges.length > 3 && (
           <button
             className="text-[#00B5BD] text-sm mt-1 cursor-pointer"
-            onClick={() => setShowAllPrices(v => !v)}
+            onClick={() => setShowAllPrices((v) => !v)}
           >
             {showAllPrices ? "Voir moins ▲" : "Voir plus ▼"}
           </button>

@@ -27,7 +27,7 @@ const WelcomeBlitSono: React.FC = () => {
           italic mb-6 text-center sm:text-left 
           border-l-4 border-[#18769C] pl-4
         ">
-          Blit Sono vous accompagne pour vos événements avec un service fiable
+          BeLoyal vous accompagne pour vos événements avec un service fiable
           et attentionné, en proposant des équipements son et lumière
           professionnels, un système de réservation simple et une équipe à
           l'écoute.

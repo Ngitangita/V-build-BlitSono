@@ -28,6 +28,7 @@ const routes = {
   "/admin/admin-catalogues": "Gestion des produits",
   "/admin/admin-category": "Gestion des catégories ",
   "/admin/admin-packs": "Gestion des packs ",
+  "/admin/admin-inventory": "Admin Inventaire",
   "/admin/admin-bundle-product": "Gestion des packs + produits ",
   "/admin/admin-reservations": "Gestion des Réservations",
 } as const;

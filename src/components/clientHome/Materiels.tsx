@@ -91,7 +91,7 @@ export default function Materiels() {
 
       <div className="text-[#1E2939] py-10 flex justify-center">
         <p className="w-full italic border-l-4 border-[#18769C] pl-4 flex gap-2 text-sm sm:text-base">
-          Blit Sono vous accompagne pour vos événements avec un service fiable
+          BeLoyal vous accompagne pour vos événements avec un service fiable
           et attentionné, en proposant des équipements son et lumière
           professionnels, un système de réservation simple et une équipe à
           l'écoute. Faites confiance à notre savoir-faire et réservez dès

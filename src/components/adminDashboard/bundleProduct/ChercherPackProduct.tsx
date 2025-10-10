@@ -54,16 +54,16 @@ const ChercherPackProduct = ({
   return (
     <div className="w-full relative">
 <button
-        className="sm:hidden fixed top-23 sm:left-2 z-40 text-2xl focus:outline-none cursor-pointer flex items-center gap-2 p-2 rounded-md text-white bg-[#18769C] hover:bg-[#0f5a70]"
+        className="sm:hidden fixed top-20 left-72 z-40 text-2xl focus:outline-none cursor-pointer flex items-center gap-2 p-2 rounded-md text-white bg-[#18769C] hover:bg-[#0f5a70]"
         onClick={() => setOpen((o) => !o)}
       >
         {open ? (
           <>
-            <MdClose className="w-6 h-6" /> Fermer
+            <MdClose className="w-6 h-4" /> Fermer
           </>
         ) : (
           <>
-            <MdFilterList className="w-6 h-6" /> Filtrer
+            <MdFilterList className="w-6 h-4" /> Filtrer
           </>
         )}
       </button>

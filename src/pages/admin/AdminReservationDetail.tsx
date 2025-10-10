@@ -8,12 +8,16 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import type { Reservation } from "../../types/user";
+import type { MaterielsType, PacksType } from "../../types/types";
 import dayjs from "dayjs";
 import "dayjs/locale/fr";
+import { convertStatusReservation } from "../../services/convertStatus";
 dayjs.locale("fr");
 
 type Props = {
   reservation: Reservation;
+  products?: MaterielsType[];
+  bundles?: PacksType[];
   onClose: () => void;
 };
 
@@ -27,78 +31,83 @@ export default function AdminReservationDetail({
   };
 
   return (
-    <Dialog
-      open={true}
-      onClose={onClose}
-      maxWidth="sm"
-      fullWidth
-      scroll="paper"
-      BackdropProps={{ sx: { backgroundColor: "rgba(30,41,57,0.8)" } }}
-    >
-      <DialogTitle className="flex justify-between items-center">
-        Détails Réservation
-        <IconButton onClick={onClose} size="small" color="error">
-          <CloseIcon />
-        </IconButton>
-      </DialogTitle>
+    <>
+      <title>Gestion des Réservations | BeLoyal</title>
+      <Dialog
+        open={true}
+        onClose={onClose}
+        maxWidth="sm"
+        fullWidth
+        scroll="paper"
+        BackdropProps={{ sx: { backgroundColor: "rgba(30,41,57,0.8)" } }}
+      >
+        <DialogTitle className="flex justify-between items-center">
+          Détails Réservation
+          <IconButton onClick={onClose} size="small" color="error">
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
 
-      <DialogContent dividers>
-        <p>
-          <strong>Client :</strong> {reservation.user?.first_name}
-        </p>
-        <p>
-          <strong>Date :</strong>
-          {combineEventDateTime(
-            reservation.event_date,
-            reservation.event_time
-          ).format("DD/MM/YYYY HH:mm")}
-        </p>
-        <p>
-          <strong>Durée :</strong> {reservation.duration_hours} h
-        </p>
-        <p>
-          <strong>Lieu :</strong> {reservation.location}
-        </p>
-        <p>
-          <strong>Statut :</strong> {reservation.status}
-        </p>
-        <p>
-          <strong>Jour/Nuit :</strong>{" "}
-          {reservation.day_night === "jour" ? "Jour" : "Nuit"}
-        </p>
+        <DialogContent dividers>
+          <p>
+            <strong>Client :</strong> {reservation.user?.first_name}
+          </p>
+          <p>
+            <strong>Date :</strong>
+            {combineEventDateTime(
+              reservation.event_date,
+              reservation.event_time
+            ).format("DD/MM/YYYY HH:mm")}
+          </p>
+          <p>
+            <strong>Durée :</strong> {reservation.duration_hours} h
+          </p>
+          <p>
+            <strong>Lieu :</strong> {reservation.location}
+          </p>
+          <p>
+            <strong>Statut :</strong>{" "}
+            {convertStatusReservation(reservation.status)}
+          </p>
 
-        {reservation.products && reservation.products.length > 0 && (
-          <div>
-            <h3 className="font-semibold mt-4">Produits :</h3>
-            <ul className="list-disc ml-6">
-              {reservation.products.map((p) => (
-                <li key={p.id_product}>
-                  {p.name} — {p.pivot?.quantity || 1} unité(s)
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+          <p>
+            <strong>Prix estimé :</strong> {reservation.estimated_price} Ar
+          </p>
+          <p>
+            <strong>Prix final :</strong> {reservation.final_price ?? "-"} Ar
+          </p>
+          <p>
+            <strong>État de la commande :</strong> {reservation.order_state}
+          </p>
+          <p>
+            <strong>Date de réservation :</strong>{" "}
+            {dayjs(reservation.reservation_date).format("DD/MM/YYYY HH:mm")}
+          </p>
 
-        {(reservation.bundles ?? []).length > 0 && (
-          <div>
-            <h3 className="font-semibold mt-4">Bundles :</h3>
-            <ul className="list-disc ml-6">
-              {(reservation.bundles ?? []).map((b) => (
-                <li key={b.id_bundle}>
-                  {b.name} — {b.pivot?.quantity || 1} unité(s)
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </DialogContent>
+          <p>
+            <strong>Jour/Nuit :</strong>{" "}
+            {reservation.day_night === "jour" ? "Jour" : "Nuit"}
+          </p>
 
-      <DialogActions>
-        <Button onClick={onClose} color="primary" variant="contained">
-          Fermer
-        </Button>
-      </DialogActions>
-    </Dialog>
+          {reservation.products?.map((p) => (
+            <li key={p.id_product}>
+              {p.name} — {p.pivot?.quantity ?? 1} unité(s)
+            </li>
+          ))}
+
+          {reservation.bundles?.map((b) => (
+            <li key={b.id_bundle}>
+              {b.name} — {b.pivot?.quantity ?? 1} unité(s)
+            </li>
+          ))}
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={onClose} color="primary" variant="contained">
+            Fermer
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 }

@@ -143,7 +143,7 @@ function AdminCatalogues() {
 
   return (
     <div className="p-4 pt-14">
-      <title>Catalogues | BlitSono</title>
+      <title>Catalogues | BeLoyal</title>
 
       <div
         className="flex flex-row flex-wrap items-center gap-2 mb-4
@@ -329,7 +329,6 @@ function AdminCatalogues() {
         </table>
       </div>
 
-      {/* Modals */}
       {showForm && (
         <MaterielForm
           materiel={current}

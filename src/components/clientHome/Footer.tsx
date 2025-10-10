@@ -32,12 +32,12 @@ const Footer: React.FC = () => {
      md:grid-cols-3 lg:grid-cols-6 gap-6"
       >
         <div>
-          <h3 className="text-lg font-semibold mb-4">Blit Sono</h3>
+          <h3 className="text-lg font-semibold mb-4">BeLoyal</h3>
           <p className="text-sm mb-4">
             Votre partenaire pour la sonorisation, l'éclairage et les
             équipements audio professionnels à Madagascar.
           </p>
-          <p className="text-sm">© 2025 Blit Sono. Tous droits réservés.</p>
+          <p className="text-sm">© 2025 BeLoyal. Tous droits réservés.</p>
         </div>
 
         <div>

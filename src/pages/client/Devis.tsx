@@ -31,7 +31,7 @@ export default function Devis() {
             Détails de votre devis
           </h1>
           <p className="w-full sm:w-[500px] text-base sm:text-lg italic mb-6 text-start flex items-center border-l-4 border-[#18769C] pl-4">
-            Avec BlitSono, découvrez en détail le matériel que vous avez
+            Avec BeLoyal, découvrez en détail le matériel que vous avez
             sélectionné ! Profitez d'un aperçu complet, prix transparent, et
             qualité professionnelle — parce que votre événement mérite
             l'excellence.

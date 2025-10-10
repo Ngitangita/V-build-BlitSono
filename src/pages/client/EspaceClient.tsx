@@ -15,6 +15,7 @@ import {
 import { MdVisibility } from "react-icons/md";
 import dayjs from "dayjs";
 import "dayjs/locale/fr";
+import { convertStatusReservation } from "../../services/convertStatus";
 dayjs.locale("fr");
 
 export default function EspaceClient() {
@@ -27,7 +28,7 @@ export default function EspaceClient() {
       .then((resp) => setReservations(resp.data))
       .catch(console.error);
   }, []);
-  
+
   const fetchById = async (id: number) => {
     try {
       const res = await axiosClient.get<Reservation>(`/reservations/${id}`);
@@ -36,7 +37,7 @@ export default function EspaceClient() {
       console.error("Erreur récupération réservation :", err);
     }
   };
-  
+
   const getReservationIcon = (status: Reservation["status"]) =>
     status === "confirmed" ? (
       <FaCalendarCheck color="green" />
@@ -53,7 +54,7 @@ export default function EspaceClient() {
 
   return (
     <div className="text-[#575756]">
-      <title>Espace Client | Blit Sono</title>
+      <title>Espace Client | BeLoyal</title>
 
       <section className="bgImageReservation">
         <div className="bg-gradient-to-r from-[#1E2939]/85 via-[#1E2939]/65 to-[#1E2939] text-white w-full flex flex-col px-4 py-8 pl-20 pt-20">
@@ -62,7 +63,7 @@ export default function EspaceClient() {
             Mes Réservations
           </h1>
           <p className="w-full sm:w-[500px] text-lg italic mb-6 text-start flex items-center border-l-4 border-[#18769C] pl-4">
-            Avec BlitSono, réservez simplement le matériel qu'il vous faut en
+            Avec BeLoyal, réservez simplement le matériel qu'il vous faut en
             quelques clics ! Découvrez nos packs professionnels adaptés à tous
             types d'événements, du matériel audio et lumière fiable et de
             qualité. Votre événement mérite le meilleur, réservez avec
@@ -118,30 +119,43 @@ export default function EspaceClient() {
               </thead>
               <tbody>
                 {reservations.map((r) => (
-                  <tr key={r.id_reservation} className="even:bg-gray-50 text-center">
+                  <tr
+                    key={r.id_reservation}
+                    className="even:bg-gray-50 text-center"
+                  >
                     <td className="px-4 py-2">
-                    {combineEventDateTime(r.event_date, r.event_time).format(
-                      "DD/MM/YYYY HH:mm"
-                    )}
-                  </td>
+                      {combineEventDateTime(r.event_date, r.event_time).format(
+                        "DD/MM/YYYY HH:mm"
+                      )}
+                    </td>
                     <td className="px-4 py-2">{r.event_time}</td>
                     <td className="px-4 py-2">{r.duration_hours} h</td>
                     <td className="px-4 py-2">{r.location}</td>
                     <td
                       className={`px-4 py-2 font-semibold flex flex-row items-center ${
-                        r.status === "confirmed" ? "text-green-600" : "text-yellow-600"
+                        r.status === "confirmed"
+                          ? "text-green-600"
+                          : "text-yellow-600"
                       }`}
                     >
                       {getReservationIcon(r.status)}
-                      <span className="ml-1">{r.status}</span>
+                      <span className="ml-1">
+                        {convertStatusReservation(r.status.toLowerCase())}
+                      </span>
                     </td>
-                    <td className="px-4 py-2">{r.estimated_price?.toLocaleString()} Ar</td>
                     <td className="px-4 py-2">
-                      {r.final_price ? `${r.final_price.toLocaleString()} Ar` : "—"}
+                      {r.estimated_price?.toLocaleString()} Ar
+                    </td>
+                    <td className="px-4 py-2">
+                      {r.final_price
+                        ? `${r.final_price.toLocaleString()} Ar`
+                        : "—"}
                     </td>
                     <td className="px-4 py-2 flex justify-center space-x-1 sm:space-x-2">
                       <button
-                        onClick={() => r.id_reservation && fetchById(r.id_reservation)}
+                        onClick={() =>
+                          r.id_reservation && fetchById(r.id_reservation)
+                        }
                         className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded cursor-pointer"
                       >
                         <MdVisibility />
@@ -176,7 +190,6 @@ export default function EspaceClient() {
         )}
       </div>
 
-      {/* Remerciement */}
       {hasReservations && (
         <div className="text-[#18769C] py-10 w-full flex flex-col pr-30 items-end">
           <h1 className="text-3xl font-extrabold mb-4 flex items-center gap-1 w-full sm:w-[500px]">
@@ -190,7 +203,6 @@ export default function EspaceClient() {
         </div>
       )}
 
-      {/* Détail d'une réservation */}
       {detail && (
         <AdminReservationDetail
           reservation={detail}

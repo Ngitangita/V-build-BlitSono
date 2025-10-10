@@ -6,15 +6,14 @@ import { useAuthStore } from "../../stores/useAuthStore";
 import { useCartStore } from "../../stores/useCartStore";
 import Search from "./Search";
 
-type MenuItem = { title: string; path: string };
-const menuItems: MenuItem[] = [
+const menuItems = [
   { title: "Accueil", path: "/" },
   { title: "Catalogue", path: "/catalogues" },
   { title: "Matériel packs", path: "/pack-materiels" },
   { title: "Espace client", path: "/client" },
 ];
 
-export default function Header(){
+export default function Header() {
   const isAuth = useAuthStore((s) => s.isAuthenticated);
   const totalItems = useCartStore((s) => s.totalCount());
   const navigate = useNavigate();
@@ -27,11 +26,13 @@ export default function Header(){
     navigate("/");
     setOpen(false);
   };
+
   const isActive = (p: string) => location.pathname === p;
 
   return (
     <header className="fixed top-0 w-full bg-[#1E2939] text-white z-50 shadow-lg">
       <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 py-3">
+       
         <Link to="/" className="flex items-center gap-2">
           <img
             src="/logo-blit.png"
@@ -54,30 +55,28 @@ export default function Header(){
         >
           {open ? <MdClose /> : <MdMenu />}
         </button>
-        
+
         <div className="hidden sm:flex items-center gap-4 lg:gap-8">
-          
           <nav className="flex gap-3 lg:gap-6">
-            {menuItems.map((item) =>
-              (item.title !== "Espace client" || isAuth) && (
-                <Link key={item.path} to={item.path}>
-                  <span
-                    className={`relative inline-block px-3 py-2 rounded-full transition ${
-                      isActive(item.path)
-                        ? "font-semibold underline underline-offset-4 text-[#18769C]"
-                        : "hover:text-[#18769C]"
-                    }`}
-                  >
-                    {item.title}
-                    {!isActive(item.path) && (
-                      <span className="absolute bottom-0 left-0 w-0 group-hover:w-full h-[2px] bg-[#18769C] transition-all duration-300"></span>
-                    )}
-                  </span>
-                </Link>
-              )
+            {menuItems.map(
+              (item) =>
+                (item.title !== "Espace client" || isAuth) && (
+                  <Link key={item.path} to={item.path}>
+                    <span
+                      className={`relative inline-block px-3 py-2 rounded-full transition ${
+                        isActive(item.path)
+                          ? "font-semibold underline underline-offset-4 text-[#18769C]"
+                          : "hover:text-[#18769C]"
+                      }`}
+                    >
+                      {item.title}
+                    </span>
+                  </Link>
+                )
             )}
           </nav>
-          {user?.id_role == 2 && (
+
+          {user?.id_role === 2 && (
             <li className="bg-white text-[#18769C] inline-block p-1 rounded">
               <Link to="/admin">Admin</Link>
             </li>
@@ -95,9 +94,11 @@ export default function Header(){
                 </span>
               )}
             </Link>
+
             <Link to="/sign-in">
               <FaUser className="text-2xl hover:text-[#18769C] transition" />
             </Link>
+
             {isAuth && (
               <button onClick={logout} className="cursor-pointer">
                 <MdLogin className="text-2xl hover:text-[#18769C] transition" />
@@ -107,29 +108,29 @@ export default function Header(){
         </div>
       </div>
 
-
       {open && (
         <div className="sm:hidden px-4 pb-4 bg-[#1E2939] border-t border-gray-700">
           <Search />
           <nav className="mt-4 flex flex-col gap-2">
-            {menuItems.map((item) =>
-              (item.title !== "Espace client" || isAuth) && (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={() => setOpen(false)}
-                >
-                  <span
-                    className={`block px-4 py-2 rounded transition ${
-                      isActive(item.path)
-                        ? "bg-gray-700 font-semibold"
-                        : "hover:bg-gray-700"
-                    }`}
+            {menuItems.map(
+              (item) =>
+                (item.title !== "Espace client" || isAuth) && (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    onClick={() => setOpen(false)}
                   >
-                    {item.title}
-                  </span>
-                </Link>
-              )
+                    <span
+                      className={`block px-4 py-2 rounded transition ${
+                        isActive(item.path)
+                          ? "bg-gray-700 font-semibold"
+                          : "hover:bg-gray-700"
+                      }`}
+                    >
+                      {item.title}
+                    </span>
+                  </Link>
+                )
             )}
           </nav>
           <div className="mt-4 flex items-center gap-4">

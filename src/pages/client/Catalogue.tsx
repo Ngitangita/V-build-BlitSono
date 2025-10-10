@@ -19,8 +19,25 @@ import axiosClient from "./../../conf/axiosClient";
 
 type PriceRange = { label: string; min: number; max: number };
 
+function highlightMatch(text: string, query: string) {
+  if (!query) return text;
+
+  const regex = new RegExp(`(${query})`, "gi");
+  const parts = text.split(regex);
+
+  return parts.map((part, i) =>
+    part.toLowerCase() === query.toLowerCase() ? (
+      <mark key={i} className="bg-yellow-300 text-black">
+        {part}
+      </mark>
+    ) : (
+      part
+    )
+  );
+}
+
 export default function Catalogue() {
-  const [searchParams] = useSearchParams();
+  const [searchParams,] = useSearchParams();
   const q = searchParams.get("q")?.toLowerCase() || "";
   const cat = searchParams.get("cat") || "";
   const [materiels, setMateriels] = useState<MaterielsType[]>([]);
@@ -116,11 +133,19 @@ export default function Catalogue() {
 
   useEffect(() => {
     let res = [...materiels];
-    if (q) res = res.filter((item) => item.name.toLowerCase().includes(q));
-    if (selectedCats.length)
+
+    if (q) {
+      res = res.filter((item) =>
+        item.name?.toLowerCase().includes(q.toLowerCase())
+      );
+    }
+
+    if (selectedCats.length) {
       res = res.filter(
         (item) => item.category && selectedCats.includes(item.category.name)
       );
+    }
+
     if (selectedPrices.length) {
       res = res.filter((item) =>
         selectedPrices.some(
@@ -128,6 +153,7 @@ export default function Catalogue() {
         )
       );
     }
+
     setFiltered(res);
   }, [q, selectedCats, selectedPrices, materiels]);
 
@@ -165,13 +191,13 @@ export default function Catalogue() {
   return (
     <div>
       <section className="bgImageCatalogue">
-        <title>Catalogues | Blit Sono</title>
+        <title>Catalogues | BeLoyal</title>
         <div
           className="bg-gradient-to-r from-[#1E2939]/85 via-[#1E2939]/65 to-[#1E2939]
           text-white w-full flex flex-col px-4 py-8 pl-20 pt-20"
         >
           <h1 className="text-3xl max-w-md sm:max-w-lg lg:max-w-xl xl:max-w-2xl font-extrabold mb-4 flex gap-2">
-            Découvrez le catalogue Blit Sono - chaque matériel compte pour la
+            Découvrez le catalogue BeLoyal - chaque matériel compte pour la
             réussite de votre événement.
           </h1>
           <p className="w-full sm:w-[500px] text-base sm:text-lg italic mb-6 text-center sm:text-start border-l-4 border-[#18769C] pl-4">
@@ -232,9 +258,9 @@ export default function Catalogue() {
             onClick={() => setOpen(false)}
           />
         )}
-
         <div className="flex-1 overflow-hidden bg-white p-4">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center sm:justify-end mb-4">
+          
+          <div className="flex flex-col sm:flex-row justify-start gap-20 items-start sm:items-center mb-4">
             <div className="flex flex-row gap-2">
               <button
                 onClick={() => setIsGrid(true)}
@@ -253,7 +279,7 @@ export default function Catalogue() {
                 <MdList /> Liste
               </button>
             </div>
-            {q && (
+             {q && (
               <div className="text-sm italic text-gray-600 mt-2 sm:mt-0">
                 Résultats pour : <strong>"{q}"</strong>
               </div>
@@ -268,8 +294,10 @@ export default function Catalogue() {
             }
           >
             {filtered.length === 0 ? (
-              <div className="flex flex-col justify-center items-center col-span-1 
-              sm:col-span-3 lg:col-span-4 xl:col-span-5 h-96 rounded bg-white">
+              <div
+                className="flex flex-col justify-center items-center col-span-1 
+              sm:col-span-3 lg:col-span-4 xl:col-span-5 h-96 rounded bg-white"
+              >
                 <MdInfoOutline className="text-gray-400 text-6xl mb-2" />
                 <span className="text-gray-500 font-medium text-lg">
                   Aucun matériel trouvé
@@ -306,10 +334,10 @@ export default function Catalogue() {
 
                     <div className="flex flex-col sm:items-center gap-2 flex-1">
                       <h3 className="font-semibold text-[#1E2939] group-hover:text-[#18769C]">
-                        {m.name}
+                        {highlightMatch(m.name, q)}
                       </h3>
                       <p className="font-semibold text-[#1E2939] group-hover:text-[#18769C]">
-                        {m.daily_price} Ar
+                        {highlightMatch(m.daily_price.toString() + " Ar", q)}
                       </p>
                     </div>
 
@@ -354,8 +382,7 @@ export default function Catalogue() {
       <div className="text-[#18769C] py-10 flex justify-center sm:justify-end">
         <div className="max-w-full sm:max-w-2xl lg:max-w-3xl">
           <h1 className="text-3xl font-extrabold mb-4 text-center sm:text-left flex flex-row gap-2">
-            <FaThumbsUp size={24} /> Merci d'avoir exploré le catalogue Blit
-            Sono !
+            <FaThumbsUp size={24} /> Merci d'avoir exploré le catalogue BeLoyal !
           </h1>
           <p className="text-base sm:text-lg lg:text-xl italic text-[#1E2939] border-l-4 border-[#18769C] pl-4">
             Chaque équipement a été pensé pour sublimer vos événements. Notre

@@ -1,168 +1,153 @@
-import { Link } from "react-router-dom";
-import {
-  FaCalendarCheck,
-  FaHeadphones,
-  FaThumbsUp,
-} from "react-icons/fa";
-import { factureStatique } from "../../data/FactureData";
-import type { LigneFacture } from "../../types/factureTypes";
-import ContactButton from './../../components/clientHome/ContactButton';
+import { useParams, Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axiosClient from "../../conf/axiosClient";
+import ContactButton from "../../components/clientHome/ContactButton";
+import { FaCalendarCheck, FaHeadphones, } from "react-icons/fa";
+import dayjs from "dayjs";
+import "dayjs/locale/fr";
+import { convertStatusReservation } from "../../services/convertStatus";
+import type { FactureReservation, ProductLine} from "../../types/types";
+dayjs.locale("fr");
+
+
+
+type FactureData = {
+  invoice: FactureReservation;
+  lines: ProductLine[];
+}
 
 export default function Facture() {
-  const f = factureStatique;
+  const { id } = useParams();
+  const [facture, setFacture] = useState<FactureData | null>(null);
+
+  useEffect(() => {
+    const fetchFacture = async () => {
+      try {
+        const { data } = await axiosClient.get<FactureData>(`/invoices/${id}`);
+        setFacture(data);
+      } catch (err) {
+        console.error("Erreur lors du chargement de la facture :", err);
+      }
+    };
+    fetchFacture();
+  }, [id]);
+
+  if (!facture) return <p>Chargement...</p>;
+
+  const f = facture.invoice;
+
+  const combineEventDateTime = (eventDate: string, eventTime: string) => {
+    const [hour, minute, second] = eventTime.split(":").map(Number);
+    return dayjs(eventDate).hour(hour).minute(minute).second(second);
+  };
 
   return (
     <div className="text-[#575756]">
-      <title>Détails de la facture | Blit Sono</title>
+      <title>Détails de la facture | BeLoyal</title>
 
       <section className="bgImageReservation">
-        <div
-          className="
-          bg-gradient-to-r from-[#1E2939]/85 via-[#1E2939]/65 to-[#1E2939]
-          text-white w-full flex flex-col px-4 py-8 pl-20 pt-20
-        " >
-          <h1
-            className="
-          text-3xl max-w-md sm:max-w-lg lg:max-w-xl xl:max-w-2xl 
-          font-extrabold mb-4 flex gap-2
-        " >
+        <div className="bg-gradient-to-r from-[#1E2939]/85 via-[#1E2939]/65 to-[#1E2939] text-white w-full flex flex-col px-4 py-8 pl-20 pt-20">
+          <h1 className="text-3xl max-w-md sm:max-w-lg lg:max-w-xl xl:max-w-2xl font-extrabold mb-4 flex gap-2">
             <FaCalendarCheck className="text-5xl sm:text-6xl lg:text-7xl text-[#18769C]" />
             Détails de votre facture
           </h1>
-
           <p className="max-w-full md:max-w-xl text-base sm:text-lg italic mb-6 text-start flex items-center border-l-4 border-[#18769C] pl-4">
-            Découvrez votre facture BlitSono : un résumé clair et détaillé du
-            matériel sélectionné, avec prix transparent et qualité
-            professionnelle. Préparez-vous à vivre un événement exceptionnel !
+            Découvrez votre facture BeLoyal : résumé clair et détaillé du matériel et des coûts.
           </p>
 
           <div className="flex flex-wrap gap-4">
-            <Link
-              to="/catalogues"
-              className="inline-flex items-center gap-2 bg-white text-[#18769C] font-semibold px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-gray-100 transition"
-            >
+            <Link to="/catalogues" className="inline-flex items-center gap-2 bg-white text-[#18769C] font-semibold px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-gray-100 transition">
               <FaHeadphones /> Explorer notre catalogue
             </Link>
             <ContactButton />
           </div>
         </div>
       </section>
-      
-      <div className="p-4 sm:p-6 md:p-8 max-w-full sm:max-w-3xl md:max-w-4xl lg:max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto bg-white rounded shadow mt-6 sm:mt-8">
-        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-4">
-          Facture
-        </h1>
-        <Link
-          to="/client"
-          className="text-[#18769C] hover:underline mb-6 block text-base sm:text-lg lg:text-2xl"
-        >
+
+      <div className="p-4 sm:p-6 md:p-8 max-w-4xl mx-auto bg-white rounded shadow mt-6 sm:mt-8">
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-4">Facture</h1>
+        <Link to="/client" className="text-[#18769C] hover:underline mb-6 block text-base sm:text-lg lg:text-2xl">
           ← Retour à mes réservations
         </Link>
 
         <div className="flex flex-col md:flex-row justify-between gap-6 mb-6 text-sm sm:text-base lg:text-lg">
-          <div className="flex flex-col items-start sm:items-center md:items-start">
-            <p>
-              <strong>Facturé à :</strong>
-            </p>
-            <p>
-              {f.user.prenom} {f.user.nom}
-            </p>
-            <p>{f.user.adresse}</p>
-            <p>
-              {f.user.codePostal} {f.user.ville}
-            </p>
+          <div>
+            <p><strong>Facturé à :</strong></p>
+            <p>{f.first_name} {f.last_name}</p>
+            <p>{f.address}</p>
+            <p>Tél : {f.phone}</p>
           </div>
 
-          <div className="text-left sm:text-center md:text-right">
-            <p>
-              Facture N° : FCT-{new Date(f.dateFacturation).getFullYear()}-
-              {f.id}
-            </p>
-            <p>
-              Date : {new Date(f.dateFacturation).toLocaleDateString("fr-FR")}
-            </p>
-            <p>
-              Événement : {f.evenement.type} - {f.evenement.lieu}
-            </p>
-            <p>Paiement : {f.evenement.paiement}</p>
-            <p>Réservation ID : {f.reservationId}</p>
+          <div>
+            <p>Facture N° : FCT-{new Date(f.billing_date).getFullYear()}-{f.invoice_id}</p>
+            <p>Date : {new Date(f.billing_date).toLocaleDateString("fr-FR")}</p>
+            <p>Événement : {combineEventDateTime(f.event_date, f.event_time).format("DD/MM/YYYY HH:mm")} à {f.location}</p>
+            <p>Réservation ID : {f.reservation_id}</p>
+            <p>Statut : {convertStatusReservation(f.status)}</p>
+            <p>Durée : {f.duration_hours} h</p>
+            <p>Prix estimé : {f.estimated_price?.toLocaleString()} Ar</p>
+            <p>Prix final : {f.final_price?.toLocaleString() ?? "-" } Ar</p>
+            <p>Jour/Nuit : {f.day_night === "jour" ? "Jour" : "Nuit"}</p>
           </div>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full table-auto mb-6 text-xs sm:text-sm md:text-base lg:text-lg">
+          <table className="w-full table-auto mb-6 text-sm">
             <thead className="bg-gray-100">
               <tr>
-                {[
-                  "Désignation",
-                  "Quantité",
-                  "Prix unitaire",
-                  "Durée",
-                  "Sous-total",
-                ].map((h) => (
-                  <th
-                    key={h}
-                    className="p-2 sm:p-3 md:p-4 text-left whitespace-nowrap"
-                  >
-                    {h}
-                  </th>
-                ))}
+                <th>Désignation</th>
+                <th>Quantité</th>
+                <th>Prix unitaire</th>
+                <th>Durée</th>
+                <th>Sous-total</th>
               </tr>
             </thead>
             <tbody>
-              {f.lignes.map((L: LigneFacture, i: number) => (
-                <tr key={i} className="even:bg-gray-50">
-                  <td className="p-2 sm:p-3 md:p-4 flex items-center space-x-3">
-                    <img
-                      src={L.image_url}
-                      alt={L.designation}
-                      className="w-10 h-10 sm:w-12 sm:h-12 object-cover rounded"
-                    />
-                    <span className="text-xs sm:text-sm md:text-base lg:text-lg">
-                      {L.designation}
-                    </span>
+              {facture.lines.map((L) => (
+                <tr key={L.id} className="even:bg-gray-50">
+                  <td className="p-2 flex items-center space-x-3">
+                    {L.image_url && <img src={L.image_url} alt={L.designation} className="w-10 h-10 object-cover rounded" />}
+                    <span>{L.designation}</span>
                   </td>
-                  <td className="p-2 sm:p-3 md:p-4">{L.quantite}</td>
-                  <td className="p-2 sm:p-3 md:p-4">
-                    {L.prixUnitaire.toLocaleString()} Ar
-                  </td>
-                  <td className="p-2 sm:p-3 md:p-4">
-                    {Math.floor(L.dureeHeure / 24)} jours
-                  </td>
-                  <td className="p-2 sm:p-3 md:p-4">
-                    {L.sousTotal.toLocaleString()} Ar
-                  </td>
+                  <td>{L.quantite}</td>
+                  <td>{L.prix_unitaire.toLocaleString()} Ar</td>
+                  <td>{Math.floor(L.duree_heure / 24)} jours</td>
+                  <td>{L.sous_total.toLocaleString()} Ar</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
 
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8">
-          <ul className="list-disc ml-6 text-sm sm:text-base lg:text-lg">
-            <li>
-              Total matériel + extras : {f.montantTotal.toLocaleString()} Ar
-            </li>
-          </ul>
+        {f.products && f.products.length > 0 && (
           <div>
-            <button className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3 bg-[#18769C] hover:bg-[#0f5a70] text-white rounded text-sm sm:text-base lg:text-lg">
-              Télécharger la facture PDF
-            </button>
+            <h3 className="font-semibold mt-4">Produits :</h3>
+            <ul className="list-disc ml-6">
+              {f.products.map((p) => (
+                <li key={p.id_product}>
+                  {p.name} — {p.pivot?.quantity || 1} unité(s)
+                </li>
+              ))}
+            </ul>
           </div>
-        </div>
-      </div>
+        )}
 
-      <div className="text-[#18769C] py-10 w-full flex flex-col px-4 sm:px-6 md:px-12 lg:px-20 xl:px-32 items-end">
-        <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold mb-4 flex items-center gap-2 max-w-full lg:max-w-xl">
-          <FaThumbsUp size={20} className="sm:size-24" /> Merci d&apos;avoir
-          choisi BlitSono !
-        </h1>
-        <p className="max-w-full md:max-w-xl text-base sm:text-lg italic text-start flex items-center border-l-4 border-[#18769C] pl-4">
-          Nous sommes honorés de participer au succès de votre événement avec du
-          matériel professionnel, fiable et de grande qualité. Vous bénéficiez
-          d&apos;une prestation experte, d&apos;une installation maîtrisée et de
-          la sérénité d&apos;un service complet. À très bientôt !
-        </p>
+        {f.bundles && f.bundles.length > 0 && (
+          <div>
+            <h3 className="font-semibold mt-4">Bundles :</h3>
+            <ul className="list-disc ml-6">
+              {f.bundles.map((b) => (
+                <li key={b.id_bundle}>
+                  {b.name} — {b.pivot?.quantity || 1} unité(s)
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <div className="flex justify-end py-4">
+          <p className="text-lg font-bold">Total : {f.total_amount.toLocaleString()} Ar</p>
+        </div>
       </div>
     </div>
   );

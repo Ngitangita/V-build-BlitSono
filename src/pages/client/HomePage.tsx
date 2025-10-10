@@ -25,7 +25,7 @@ function HomePage(): JSX.Element {
 
   return (
     <div>
-      <title>Accueil | Blit Sono - Événements en musique</title>
+      <title>Accueil | BeLoyal - Événements en musique</title>
       <WelcomeBlitSono />
       {error && <p className="text-red-500 text-center mt-4">{error}</p>}
       <Packs packItems={packItems} />

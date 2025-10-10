@@ -75,4 +75,7 @@ export type Reservation = {
   products?: MaterielsType[];
   bundles?: PacksType[];
   day_night?: "jour" | "nuit";
+  order_state?: string;
+  reservation_date?: string;
+  cancellation_reason?: string;
 };

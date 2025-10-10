@@ -1,12 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { MdVisibility, MdInfoOutline } from "react-icons/md";
 import { Tooltip } from "@mui/material";
-import { allPackItems } from "../../data/allPackItems";
-import BundleProductDetail from "./../../components/adminDashboard/bundleProduct/BundleProductDetail";
+import axiosClient from "../../conf/axiosClient";
+import type { BundleProductTypes } from "../../types/types";
+import BundleProductDetail from "../../components/adminDashboard/bundleProduct/BundleProductDetail";
 import ChercherPackProduct from "../../components/adminDashboard/bundleProduct/ChercherPackProduct";
+import PostBundleProduct from "../../components/adminDashboard/bundleProduct/PostBundleProduct";
 
 function AdminBundleProduct() {
-  const [detail, setDetail] = useState<(typeof allPackItems)[0] | null>(null);
+  const [bundleProducts, setBundleProducts] = useState<BundleProductTypes[]>(
+    []
+  );
+  const [detail, setDetail] = useState<BundleProductTypes | null>(null);
 
   const [searchName, setSearchName] = useState("");
   const [searchPack, setSearchPack] = useState("");
@@ -17,34 +22,69 @@ function AdminBundleProduct() {
   const [searchStock, setSearchStock] = useState("");
   const [openChercher, setOpenChercher] = useState(false);
 
-  const filtered = allPackItems.filter((item) => {
+  const [bundles, setBundles] = useState<{ id_bundle: number; name: string }[]>(
+    []
+  );
+  const [products, setProducts] = useState<
+    {
+      id_product: number;
+      name: string;
+      category?: { name: string };
+      daily_price?: number;
+      stock_available?: number;
+      is_active?: boolean;
+    }[]
+  >([]);
+  const [openPost, setOpenPost] = useState(false);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const [productRes, bundleRes] = await Promise.all([
+        axiosClient.get("/products"),
+        axiosClient.get("/bundles"),
+      ]);
+
+      setProducts(productRes.data);
+      setBundles(bundleRes.data);
+
+      setBundleProducts([]);
+    } catch (err) {
+      console.error("Erreur lors du chargement des produits et packs:", err);
+    }
+  };
+
+  const handleBundleProductCreated = (newBundleProduct: BundleProductTypes) => {
+    // On ajoute le nouveau produit au pack côté frontend
+    setBundleProducts((prev) => [...prev, newBundleProduct]);
+  };
+
+  // Filtrage
+  const filtered = bundleProducts.filter((item) => {
     const matchName = item.product.name
       .toLowerCase()
       .includes(searchName.toLowerCase());
-
     const matchPack = item.bundle.name
       .toLowerCase()
       .includes(searchPack.toLowerCase());
-
     const matchCategorie = item.product.category?.name
-      .toLowerCase()
+      ?.toLowerCase()
       .includes(searchCategorie.toLowerCase());
-
     const matchStatus =
       searchStatus === "" ||
       (searchStatus === "actif" && item.product.is_active) ||
       (searchStatus === "inactif" && !item.product.is_active);
-
     const matchPrix =
       searchPrix === "" ||
       (item.product.daily_price !== undefined &&
         item.product.daily_price.toString().includes(searchPrix));
-
     const matchQuantity =
       searchQuantity === "" ||
       (item.quantity !== undefined &&
         item.quantity.toString().includes(searchQuantity));
-
     const matchStock =
       searchStock === "" ||
       (item.product.stock_available !== undefined &&
@@ -61,23 +101,30 @@ function AdminBundleProduct() {
     );
   });
 
-  const grouped = filtered.reduce((acc, item) => {
+  const grouped: Record<
+    string,
+    Record<string, BundleProductTypes[]>
+  > = filtered.reduce((acc, item) => {
     const packName = item.bundle.name;
     const catName = item.product.category?.name ?? "Aucune";
     if (!acc[packName]) acc[packName] = {};
     if (!acc[packName][catName]) acc[packName][catName] = [];
     acc[packName][catName].push(item);
     return acc;
-  }, {} as Record<string, Record<string, typeof filtered>>);
+  }, {} as Record<string, Record<string, BundleProductTypes[]>>);
 
   return (
     <div className="p-4 pt-14">
-      <title>Catalogues | BlitSono</title>
+      <title>Catalogues | BeLoyal</title>
 
-      <div
-        className="mb-4
-       bg-white p-10 sm:py-4 sm:px-4 rounded sticky top-20 z-20 shadow"
-      >
+      <div className="flex flex-row flex-wrap items-center gap-2 mb-4 bg-white p-6 sm:py-2 sm:px-4 rounded sticky top-14 z-20 shadow">
+        <button
+          onClick={() => setOpenPost(true)}
+          className="px-4 py-2 bg-[#18769C] text-white rounded hover:bg-[#0f5a70] cursor-pointer"
+        >
+          Ajouter un produit à un Pack
+        </button>
+
         <ChercherPackProduct
           searchName={searchName}
           setSearchName={setSearchName}
@@ -146,7 +193,7 @@ function AdminBundleProduct() {
                       >
                         <td className="px-4 py-2">{item.product.name}</td>
                         <td className="px-4 py-2">
-                          {item.product.daily_price.toLocaleString()} Ar
+                          {item.product.daily_price?.toLocaleString()} Ar
                         </td>
                         <td className="px-4 py-2 text-center">
                           {item.quantity}
@@ -192,6 +239,22 @@ function AdminBundleProduct() {
 
       {detail && (
         <BundleProductDetail item={detail} onClose={() => setDetail(null)} />
+      )}
+
+      {openPost && (
+        <div className="fixed inset-0 flex items-center justify-center bg-[#1E2939]/80 bg-opacity-50 z-50">
+          <div className="bg-white p-6 rounded shadow-lg w-[500px]">
+            <PostBundleProduct
+              products={products.filter(
+                (p): p is { id_product: number; name: string } =>
+                  p.id_product !== undefined
+              )}
+              bundles={bundles}
+              onClose={() => setOpenPost(false)}
+              onBundleProductCreated={handleBundleProductCreated}
+            />
+          </div>
+        </div>
       )}
     </div>
   );

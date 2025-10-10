@@ -67,6 +67,7 @@ export type BundleProductTypes = {
 
 
 
+
 export type MaterielReserved = {
   materiel_id: number;
   name: string;
@@ -101,3 +102,48 @@ export type PackItemsType = {
   productId: MaterielsType;
   quantite: number;
 };
+
+export type Inventory = {
+  id_inventory: number;
+  id_product: number;
+  serial_number: string;
+  condition: string;
+  purchase_date: string; 
+  is_available: boolean;
+};
+
+
+export type InventoryWithProduct = Inventory & {
+  product: MaterielsType;
+};
+
+export type ProductLine ={
+  id: number;
+  designation: string;
+  quantite: number;
+  prix_unitaire: number;
+  duree_heure: number;
+  sous_total: number;
+  image_url?: string;
+}
+
+export type FactureReservation = {
+  invoice_id: number;
+  total_amount: number;
+  billing_date: string;
+  reservation_id: number;
+  event_date: string;
+  event_time: string;
+  location: string;
+  first_name: string;
+  last_name: string;
+  address: string;
+  phone: string;
+  status: string;
+  duration_hours: number;
+  estimated_price?: number;
+  final_price?: number;
+  day_night?: string;
+  products?: { id_product: number; name: string; pivot?: { quantity: number } }[];
+  bundles?: { id_bundle: number; name: string; pivot?: { quantity: number } }[];
+}
