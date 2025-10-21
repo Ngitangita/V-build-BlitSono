@@ -6,7 +6,8 @@ import MaterielForm from "../../components/adminDashboard/catalogues/MaterielFor
 import DeleteConfirm from "../../components/adminDashboard/catalogues/DeleteConfirm";
 import type { MaterielsType, Category } from "../../types/types";
 import MaterielSearch from "../../components/adminDashboard/catalogues/MaterielSearch";
-import { Tooltip } from "@mui/material";
+import { Tooltip } from "react-tooltip";
+import { toast } from "react-toastify";
 import MaterielDetail from "../../components/adminDashboard/catalogues/MaterielDetail";
 
 function AdminCatalogues() {
@@ -16,7 +17,7 @@ function AdminCatalogues() {
   const [showForm, setShowForm] = useState(false);
   const [, setCategories] = useState<Category[]>([]);
   const [detail, setDetail] = useState<MaterielsType | null>(null);
-  const [open, setOpen] = useState(false); 
+  const [open, setOpen] = useState(false);
 
   const [searchName, setSearchName] = useState("");
   const [searchPrix, setSearchPrix] = useState("");
@@ -41,8 +42,7 @@ function AdminCatalogues() {
       const mapped = arr.map((m) => ({
         ...m,
         image_url: m.image_url ?? "",
-        stock_total: m.stock_total ?? 0,
-        stock_available: m.stock_available ?? 0,
+        stock_quantity: m.stock_quantity ?? 0,
       }));
       setMateriels(mapped);
 
@@ -69,8 +69,7 @@ function AdminCatalogues() {
         setDetail({
           ...product,
           image_url: product.image_url ?? "",
-          stock_total: product.stock_total ?? 0,
-          stock_available: product.stock_available ?? 0,
+          stock_quantity: product.stock_quantity ?? 0,
         });
       }
     } catch (err) {
@@ -108,6 +107,7 @@ function AdminCatalogues() {
       await axiosClient.delete(`/products/${deleting.id_product}`);
       setDeleting(null);
       fetchData();
+      toast.success("produite a été supprimé avec succès ");
     }
   };
 
@@ -117,10 +117,7 @@ function AdminCatalogues() {
       searchPrix === "" || m.daily_price.toString().includes(searchPrix);
     const matchStockTotal =
       searchStockTotal === "" ||
-      (m.stock_total ?? 0).toString().includes(searchStockTotal);
-    const matchStockAvailable =
-      searchStockAvailable === "" ||
-      (m.stock_available ?? 0).toString().includes(searchStockAvailable);
+      (m.stock_quantity ?? 0).toString().includes(searchStockTotal);
     const matchCategorie =
       searchCategorie === "" ||
       (m.category?.name ?? "")
@@ -132,12 +129,7 @@ function AdminCatalogues() {
       (searchStatus === "inactif" && !m.is_active);
 
     return (
-      matchName &&
-      matchPrix &&
-      matchStockTotal &&
-      matchStockAvailable &&
-      matchCategorie &&
-      matchStatus
+      matchName && matchPrix && matchStockTotal && matchCategorie && matchStatus
     );
   });
 
@@ -151,6 +143,8 @@ function AdminCatalogues() {
       >
         <button
           onClick={() => openForm()}
+          data-tooltip-id="tooltip"
+          data-tooltip-content="Ajouter un nouveau matériel"
           className="inline-block px-4 py-2 bg-[#18769C] hover:bg-[#0f5a70] text-white font-medium rounded cursor-pointer"
         >
           + Ajouter un matériel
@@ -192,7 +186,6 @@ function AdminCatalogues() {
               <th className="px-4 py-2 whitespace-nowrap">Prix loc.</th>
               <th className="px-4 py-2 whitespace-nowrap">Coût de rempl.</th>
               <th className="px-4 py-2 whitespace-nowrap">Stock total</th>
-              <th className="px-4 py-2 whitespace-nowrap">Stock dispo</th>
               <th className="px-4 py-2">Description</th>
               <th className="px-4 py-2 whitespace-nowrap">Statut</th>
               <th className="px-4 py-2 whitespace-nowrap">Actions</th>
@@ -244,14 +237,10 @@ function AdminCatalogues() {
                         {m.daily_price.toLocaleString()} Ar
                       </td>
                       <td className="px-4 py-2 whitespace-nowrap">
-                        {" "}
                         {(m.replacement_cost ?? 0).toLocaleString()} Ar
                       </td>
                       <td className="px-4 py-2 text-center whitespace-nowrap">
-                        {m.stock_total}
-                      </td>
-                      <td className="px-4 py-2 text-center whitespace-nowrap">
-                        {m.stock_available}
+                        {m.stock_quantity}
                       </td>
                       <td className="px-4 py-2">
                         {(m.description ?? "").split(" ").length > 2
@@ -262,49 +251,51 @@ function AdminCatalogues() {
                           : m.description}
                       </td>
                       <td className="px-4 py-2 whitespace-nowrap">
-                        <Tooltip title={m.is_active ? "Désactiver" : "Activer"}>
-                          <span
-                            onClick={async () => {
-                              try {
-                                await axiosClient.put(
-                                  `/products/${m.id_product}`,
-                                  {
-                                    ...m,
-                                    is_active: !m.is_active,
-                                  }
-                                );
-                                fetchData();
-                              } catch (err) {
-                                console.error("Erreur changement statut:", err);
-                              }
-                            }}
-                            className={`px-2 py-1 rounded cursor-pointer transition-colors duration-200 ${
-                              m.is_active
-                                ? "bg-green-100 text-green-800 hover:bg-green-200"
-                                : "bg-red-100 text-red-800 hover:bg-red-200"
-                            }`}
-                          >
-                            {m.is_active ? "Actif" : "Inactif"}
-                          </span>
-                        </Tooltip>
+                        <span
+                          data-tooltip-id="tooltip"
+                          data-tooltip-content={m.is_active ? "Désactiver" : "Activer"}
+                          onClick={async () => {
+                            try {
+                              await axiosClient.put(
+                                `/products/${m.id_product}`,
+                                { ...m, is_active: !m.is_active }
+                              );
+                              fetchData();
+                            } catch (err) {
+                              console.error("Erreur changement statut:", err);
+                            }
+                          }}
+                          className={`px-2 py-1 rounded cursor-pointer transition-colors duration-200 ${
+                            m.is_active
+                              ? "bg-green-100 text-green-800 hover:bg-green-200"
+                              : "bg-red-100 text-red-800 hover:bg-red-200"
+                          }`}
+                        >
+                          {m.is_active ? "Actif" : "Inactif"}
+                        </span>
                       </td>
                       <td className="px-4 py-2 flex gap-2 justify-center whitespace-nowrap">
                         <button
+                          data-tooltip-id="tooltip"
+                          data-tooltip-content="Modifier"
                           onClick={() => openForm(m)}
                           className="px-4 py-2 bg-[#18769C] hover:bg-[#0f5a70] text-white rounded cursor-pointer"
                         >
                           <FaRegEdit />
                         </button>
                         <button
+                          data-tooltip-id="tooltip"
+                          data-tooltip-content="Voir détails"
                           onClick={() =>
-                            m.id_product !== undefined &&
-                            fetchById(m.id_product)
+                            m.id_product !== undefined && fetchById(m.id_product)
                           }
                           className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded cursor-pointer"
                         >
                           <MdVisibility />
                         </button>
                         <button
+                          data-tooltip-id="tooltip"
+                          data-tooltip-content="Supprimer"
                           onClick={() => confirmDelete(m)}
                           className="px-4 py-2 bg-[#e3342f] hover:bg-[#cc1f1a] text-white rounded cursor-pointer"
                         >
@@ -330,22 +321,15 @@ function AdminCatalogues() {
       </div>
 
       {showForm && (
-        <MaterielForm
-          materiel={current}
-          onSave={handleSave}
-          onCancel={closeForm}
-        />
+        <MaterielForm materiel={current} onSave={handleSave} onCancel={closeForm} />
       )}
-      {detail && (
-        <MaterielDetail materiel={detail} onClose={() => setDetail(null)} />
-      )}
-      {deleting && (
-        <DeleteConfirm
-          item={deleting.name}
-          onCancel={cancelDelete}
-          onConfirm={handleDelete}
-        />
-      )}
+      {detail && <MaterielDetail materiel={detail} onClose={() => setDetail(null)} />}
+      {deleting && <DeleteConfirm item={deleting.name} onCancel={cancelDelete} onConfirm={handleDelete} />}
+
+      <Tooltip
+        id="tooltip"
+        className="z-50 text-sm bg-gray-800 text-white p-2 rounded"
+      />
     </div>
   );
 }

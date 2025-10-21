@@ -74,10 +74,7 @@ const MaterielDetail = ({ materiel, onClose }: MaterielDetailProps) => {
         {materiel.replacement_cost != null ? materiel.replacement_cost.toLocaleString() : ""} Ar
         </p>
         <p>
-          <strong>Stock total :</strong> {materiel.stock_total}
-        </p>
-        <p>
-          <strong>Stock disponible :</strong> {materiel.stock_available}
+          <strong>Stock total :</strong> {materiel.stock_quantity}
         </p>
         <p>
           <strong>Description :</strong> {materiel.description}

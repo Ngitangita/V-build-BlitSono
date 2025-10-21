@@ -77,8 +77,7 @@ export default function MaterielDetail() {
             Admirez cette pièce d'exception : design soigné et fonctionnalités
             premium, le tout à seulement
             <strong> {mat.daily_price} Ar</strong>.
-            Stock : <strong>{mat.stock_available} article</strong> disponible sur{" "}
-            <strong>{mat.stock_total} article</strong> au total.
+            Stock : <strong>{mat.stock_quantity} article</strong> au total.
           </p>
           <div className="space-x-4">
             <Link

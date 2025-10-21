@@ -50,7 +50,6 @@ function AdminBundleProduct() {
 
       setProducts(productRes.data);
       setBundles(bundleRes.data);
-
       setBundleProducts([]);
     } catch (err) {
       console.error("Erreur lors du chargement des produits et packs:", err);
@@ -85,10 +84,7 @@ function AdminBundleProduct() {
       searchQuantity === "" ||
       (item.quantity !== undefined &&
         item.quantity.toString().includes(searchQuantity));
-    const matchStock =
-      searchStock === "" ||
-      (item.product.stock_available !== undefined &&
-        item.product.stock_available.toString().includes(searchStock));
+    
 
     return (
       matchName &&
@@ -96,8 +92,7 @@ function AdminBundleProduct() {
       matchCategorie &&
       matchStatus &&
       matchPrix &&
-      matchQuantity &&
-      matchStock
+      matchQuantity 
     );
   });
 
@@ -197,9 +192,6 @@ function AdminBundleProduct() {
                         </td>
                         <td className="px-4 py-2 text-center">
                           {item.quantity}
-                        </td>
-                        <td className="px-4 py-2 text-center">
-                          {item.product.stock_available}
                         </td>
                         <td className="px-4 py-2">
                           {item.product.category?.name ?? "Aucune"}

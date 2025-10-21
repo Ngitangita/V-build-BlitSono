@@ -1,9 +1,9 @@
 export const convertStatusReservation = (status: string): string => {
   const statusMap: Record<string, string> = {
-    pending: 'En attente',
-    validee: 'Validée',
-    refusee: 'Refusée',
+    pending: "En attente",
+    confirmed: "Validée",
+    rejected: "Refusée",
   };
 
-  return statusMap[status.toLowerCase()] || 'Statut inconnu';
+  return statusMap[status.toLowerCase()] || "Statut inconnu";
 };

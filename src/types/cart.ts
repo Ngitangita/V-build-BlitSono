@@ -6,3 +6,9 @@ export type CartItem = {
   price: number;
   image_url?: string;
 }
+
+export type BasketItem = {
+  name: string;
+  availableQty: number;
+};
+

@@ -28,12 +28,11 @@ export type MaterielsType = {
     name: string;
   };
   image_url?: string;      
-  stock_total?: number;   
-  stock_available?: number; 
    pivot?: {
     quantity?: number;
     price?: number;
   };
+  stock_quantity: number;
 };
 
 

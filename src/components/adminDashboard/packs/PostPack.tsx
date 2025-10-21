@@ -1,5 +1,6 @@
 import { useForm } from "react-hook-form";
 import axiosClient from "../../../conf/axiosClient";
+import { toast } from "react-toastify";
 
 interface FormData {
   name: string;
@@ -19,18 +20,24 @@ function PostPack({ onClose, onBundleCreated }: Props) {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<FormData>();
+  } = useForm<FormData>({
+    defaultValues: {
+      is_active: true, 
+    },
+  });;
 
   const onSubmit = async (data: FormData) => {
-    try {
-      await axiosClient.post("/bundles", data);
-      onBundleCreated(); 
-      reset(); 
-      onClose(); 
-    } catch (err) {
-      console.error("Erreur création pack:", err);
-    }
-  };
+  try {
+    await axiosClient.post("/bundles", data);
+    toast.success("Pack créé avec succès !");
+    onBundleCreated();
+    reset();
+    onClose();
+  } catch (err) {
+    console.error("Erreur création pack:", err);
+    toast.error("Erreur lors de la création du pack");
+  }
+};
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="p-6 flex flex-col gap-4">
@@ -89,6 +96,7 @@ function PostPack({ onClose, onBundleCreated }: Props) {
           type="checkbox"
           {...register("is_active")}
           className="w-4 h-4"
+          defaultChecked
         />
         <label htmlFor="is_active">Activer le pack</label>
       </div>

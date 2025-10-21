@@ -1,238 +1,116 @@
-import React, { useEffect, useState, useRef } from "react";
-import axiosClient from "../../conf/axiosClient";
-import { FaRegEye, FaCalendarCheck, FaCalendarAlt } from "react-icons/fa";
-import { MdCancel } from "react-icons/md";
-import { toast } from "react-toastify";
-import type { Reservation } from "../../types/user";
-import type { MaterielsType, PacksType } from "../../types/types";
+import React, { useRef } from "react";
+import useReservations from "../../hooks/useReservations";
+import ReservationRow from "../../components/adminDashboard/reservations/ReservationRow";
+import ConfirmationModal from "../../components/adminDashboard/reservations/ConfirmationModal";
+import ReservationFilters from "../../components/adminDashboard/reservations/ReservationFilters";
+import { Tooltip } from "react-tooltip";
 import ReservationDetail from "./AdminReservationDetail";
-import { convertStatusReservation } from "../../services/convertStatus";
 
 export default function AdminReservations() {
-  const [reservations, setReservations] = useState<Reservation[]>([]);
-  const [products, setProducts] = useState<MaterielsType[]>([]);
-  const [bundles, setBundles] = useState<PacksType[]>([]);
-  const [filters, setFilters] = useState({
-    client: "",
-    status: "",
-    startDate: "",
-    endDate: "",
-  });
+  const {
+    reservations,
+    products,
+    bundles,
+    filters,
+    setFilters,
+    modalAction,
+    openModal,
+    closeModal,
+    selectedReservation,
+    openDetail,
+    closeDetail,
+    updateReservation,
+  } = useReservations();
 
-  const [selectedReservation, setSelectedReservation] =
-    useState<Reservation | null>(null);
-  const [isDetailOpen, setIsDetailOpen] = useState(false);
   const detailRef = useRef<HTMLDivElement | null>(null);
-
-  const fetchReservations = async () => {
-    try {
-      const { data } = await axiosClient.get<Reservation[]>("/reservations");
-      setReservations(Array.isArray(data) ? data : []);
-    } catch (err) {
-      toast.error("Erreur lors du chargement des réservations");
-      console.error(err);
-    }
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === detailRef.current) closeDetail();
   };
 
-  const fetchProducts = async () => {
-    try {
-      const { data } = await axiosClient.get<MaterielsType[]>("/products");
-      setProducts(Array.isArray(data) ? data : []);
-    } catch (err) {
-      toast.error("Erreur lors du chargement des produits");
-      console.error(err);
-    }
-  };
-
-  const fetchBundles = async () => {
-    try {
-      const { data } = await axiosClient.get<PacksType[]>("/bundles");
-      setBundles(Array.isArray(data) ? data : []);
-    } catch (err) {
-      toast.error("Erreur lors du chargement des bundles");
-      console.error(err);
-    }
-  };
-
-  useEffect(() => {
-    fetchReservations();
-    fetchProducts();
-    fetchBundles();
-  }, []);
-
-  const handleOverlayClick = (
-    e: React.MouseEvent<HTMLDivElement>,
-    ref: React.RefObject<HTMLDivElement | null>,
-    close: () => void
-  ) => {
-    if (e.target === ref.current) close();
-  };
-
-  const filteredReservations = reservations.filter((r) => {
-    const matchClient = r.user?.first_name
-      .toLowerCase()
-      .includes(filters.client.toLowerCase());
-    const matchStatus = filters.status ? r.status === filters.status : true;
-    const matchStart = filters.startDate
-      ? r.event_date >= filters.startDate
-      : true;
-    const matchEnd = filters.endDate ? r.event_date <= filters.endDate : true;
-    return matchClient && matchStatus && matchStart && matchEnd;
-  });
-
-  const openDetail = (reservation: Reservation) => {
-    setSelectedReservation(reservation);
-    setIsDetailOpen(true);
-  };
-
-  const cancelReservation = async (reservation: Reservation) => {
-    try {
-      await axiosClient.put(
-        `/reservations/${reservation.id_reservation}/cancel`
-      );
-      toast.success("Réservation annulée avec succès");
-      fetchReservations();
-    } catch (err) {
-      toast.error("Erreur lors de l'annulation");
-      console.error(err);
-    }
-  };
-
-  const getReservationIcon = (status: Reservation["status"]) =>
-    status === "confirmed" ? (
-      <FaCalendarCheck color="green" />
-    ) : (
-      <FaCalendarAlt color="#f59e0b" />
-    );
+  const confirmationModalAction =
+    modalAction?.type === "delete"
+      ? { type: null, reservation: null }
+      : {
+          type: modalAction?.type as "cancel" | "confirm" | null,
+          reservation: modalAction?.reservation ?? null,
+        };
 
   return (
-    <div className="p-4 pt-14">
+    <div className="p-4 pt-14 bg-gray-50 min-h-screen">
       <title>Réservations | BeLoyal</title>
 
-      <div className="container border border-gray-50 flex flex-row flex-wrap items-start gap-2 mb-4 bg-white p-6 rounded">
-        <input
-          type="text"
-          placeholder="Rechercher par client"
-          className="border px-2 py-1 rounded"
-          value={filters.client}
-          onChange={(e) => setFilters({ ...filters, client: e.target.value })}
-        />
-        <select
-          value={filters.status}
-          onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-          className="border px-2 py-1 rounded"
-        >
-          <option value="">Tous les statuts</option>
-          <option value="confirmed">Confirmée</option>
-          <option value="pending">En attente</option>
-          <option value="cancelled">Annulée</option>
-        </select>
-        <input
-          type="date"
-          value={filters.startDate}
-          onChange={(e) =>
-            setFilters({ ...filters, startDate: e.target.value })
-          }
-          className="border px-2 py-1 rounded"
-        />
-        <input
-          type="date"
-          value={filters.endDate}
-          onChange={(e) => setFilters({ ...filters, endDate: e.target.value })}
-          className="border px-2 py-1 rounded"
-        />
+      <div className="flex flex-wrap gap-2 bg-white border border-gray-100 p-4 rounded shadow-sm">
+        <ReservationFilters filter={filters} setFilter={setFilters} />
       </div>
 
-      <table className="min-w-full bg-white table-fixed">
-        <thead>
-          <tr className="bg-gray-200">
-            <th className="py-2 px-4">Client</th>
-            <th className="py-2 px-4">Date</th>
-            <th className="py-2 px-4">Heure</th>
-            <th className="py-2 px-4">Durée (h)</th>
-            <th className="py-2 px-4">Produits/Bundles</th>
-            <th className="py-2 px-4">Statut</th>
-            <th className="py-2 px-4">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredReservations.length > 0 ? (
-            filteredReservations.map((r) => (
-              <tr
-                key={r.id_reservation}
-                className="text-center hover:bg-gray-100 even:bg-gray-50"
-              >
-                <td>{r.user?.first_name}</td>
-                <td>{r.event_date}</td>
-                <td>{r.event_time}</td>
-                <td>{r.duration_hours}</td>
-                <td className="text-left">
-                  {r.products?.map((p) => (
-                    <span key={p.id_product}>
-                      {p.name} x {p.pivot?.quantity ?? 1}
-                    </span>
-                  ))}
-
-                  {r.bundles?.map((b) => (
-                    <span key={b.id_bundle}>
-                      {b.name} x {b.pivot?.quantity ?? 1}
-                    </span>
-                  ))}
-                </td>
+      <div className="overflow-x-auto mt-4 bg-white rounded-lg shadow">
+        <table className="min-w-full border-collapse">
+          <thead className="bg-gray-100">
+            <tr className="text-sm sm:text-base text-gray-700">
+              <th className="py-3 px-4 text-left">Client</th>
+              <th className="py-3 px-4 text-left">Date/Heure</th>
+              <th className="py-3 px-4 text-left">Lieu</th>
+              <th className="py-3 px-4 text-left">Durée (h)</th>
+              <th className="py-3 px-4 text-left">Produits / Bundles</th>
+              <th className="py-3 px-4 text-center">Statut</th>
+              <th className="py-3 px-4 text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {reservations.length ? (
+              reservations.map((r) => (
+                <ReservationRow
+                  key={r.id_reservation}
+                  r={r}
+                  openDetail={openDetail}
+                  openModal={openModal}
+                  updateReservation={updateReservation}
+                  closeModal={closeModal}
+                />
+              ))
+            ) : (
+              <tr>
                 <td
-                  className={`px-4 py-2 font-semibold flex flex-row items-center ${
-                    r.status === "confirmed"
-                      ? "text-green-600"
-                      : "text-yellow-600"
-                  }`}
+                  colSpan={7}
+                  className="py-6 text-center text-gray-500 italic"
                 >
-                  {getReservationIcon(r.status)}
-                  <span className="ml-1">
-                    {convertStatusReservation(r.status.toLowerCase())}
-                  </span>
-                </td>
-                <td className="flex justify-center gap-2 py-3">
-                  <button
-                    onClick={() => openDetail(r)}
-                    className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                  >
-                    <FaRegEye />
-                  </button>
-                  {r.status !== "cancelled" && (
-                    <button
-                      onClick={() => cancelReservation(r)}
-                      className="p-2 bg-red-500 text-white rounded hover:bg-red-600"
-                    >
-                      <MdCancel />
-                    </button>
-                  )}
+                  Aucune réservation trouvée
                 </td>
               </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan={7} className="py-4 text-center text-gray-500">
-                Aucune réservation trouvée
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+            )}
+          </tbody>
+        </table>
+      </div>
 
-      {isDetailOpen && selectedReservation && (
+      <Tooltip
+        id="tooltip"
+        className="z-50 text-sm bg-gray-800 text-white p-2 rounded"
+      />
+
+      <ConfirmationModal
+        modalAction={confirmationModalAction}
+        onConfirm={() =>
+          confirmationModalAction.reservation &&
+          updateReservation(
+            confirmationModalAction.reservation,
+            confirmationModalAction.type!
+          )
+        }
+        onClose={closeModal}
+      />
+
+      {selectedReservation && (
         <div
           ref={detailRef}
-          onClick={(e) =>
-            handleOverlayClick(e, detailRef, () => setIsDetailOpen(false))
-          }
-          className="fixed inset-0 bg-[#1E2939]/80 flex items-center justify-center z-50"
+          onClick={handleOverlayClick}
+          className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"
         >
-          <div className="bg-white rounded-lg shadow-lg w-[90%] sm:w-[600px]">
+          <div className="bg-white rounded-xl shadow-lg w-full max-w-lg">
             <ReservationDetail
               reservation={selectedReservation}
               products={products}
               bundles={bundles}
-              onClose={() => setIsDetailOpen(false)}
+              onClose={closeDetail}
             />
           </div>
         </div>

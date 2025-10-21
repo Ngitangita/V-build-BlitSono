@@ -6,7 +6,7 @@ import axios from "axios";
 import axiosClient from "../../conf/axiosClient";
 import { useCartStore } from "../../stores/useCartStore";
 import { useAuthStore } from "../../stores/useAuthStore";
-import type { CartItem } from "../../types/cart";
+import type { CartItem, BasketItem } from "../../types/cart";
 import type { UserType } from "../../types/user";
 
 export type BasketFormProps = {
@@ -14,7 +14,6 @@ export type BasketFormProps = {
   total: number;
   remove: (id: number) => void;
   updateQuantity: (id: number, delta: number) => void;
-  availabilityErrors?: Record<number, string>;
 };
 
 export default function BasketForm({
@@ -39,12 +38,13 @@ export default function BasketForm({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [countdown, setCountdown] = useState<number | null>(null);
-const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     const saved = localStorage.getItem("reservationForm");
     if (saved) setFormData(JSON.parse(saved));
   }, []);
+
   useEffect(() => {
     localStorage.setItem("reservationForm", JSON.stringify(formData));
   }, [formData]);
@@ -58,7 +58,7 @@ const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
       e.duration = "Durée invalide.";
     return e;
   };
-
+  
   const sendReservation = async () => {
     const payload = {
       event_date: formData.eventDate,
@@ -77,22 +77,37 @@ const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
       await axiosClient.post("/reservations", payload, {
         headers: { "Content-Type": "application/json" },
       });
-      toast.success("Réservation enregistrée !");
+
+      toast.success("Réservation enregistrée ! ");
       clearCart();
       localStorage.removeItem("reservationForm");
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
-        const msg =
-          err.response?.data?.message ||
-          "Erreur lors de la réservation.";
-        toast.error(msg);
-      } else toast.error("Erreur inconnue.");
+        if (err.response?.status === 409) {
+          const unavailableItems = err.response.data?.unavailableItems || [];
+          if (unavailableItems.length > 0) {
+            const msg =
+              "Certains articles sont indisponibles pour cette période :\n" +
+              unavailableItems
+                .map((i: BasketItem) => `- ${i.name} (disponible: ${i.availableQty})`)
+                .join("\n") +
+              "\nVeuillez modifier la date, la quantité ou remplacer l'article.";
+            toast.error(msg);
+          }
+        } else {
+          const msg =
+            err.response?.data?.message || "Erreur lors de la réservation.";
+          toast.error(msg);
+        }
+      } else {
+        toast.error("Erreur inconnue.");
+      }
     } finally {
       setIsSubmitting(false);
       setCountdown(null);
     }
   };
-  
+
   const startCountdown = () => {
     if (!user) {
       toast.warning("Veuillez vous connecter pour continuer.");
@@ -103,15 +118,18 @@ const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
       toast.info("Votre panier est vide.");
       return;
     }
+
     const errs = validate();
     if (Object.keys(errs).length) {
       setErrors(errs);
       toast.error("Corrigez les erreurs avant de soumettre.");
       return;
     }
+
     setErrors({});
     setCountdown(5);
     setIsSubmitting(true);
+
     countdownRef.current = setInterval(() => {
       setCountdown((p) => {
         if (p !== null && p <= 1) {
@@ -273,6 +291,7 @@ const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
   );
 }
 
+
 function Input({
   label,
   type,
@@ -290,7 +309,6 @@ function Input({
   placeholder?: string;
   min?: number;
 }) {
-
   return (
     <div className="flex flex-col">
       <label>{label}</label>

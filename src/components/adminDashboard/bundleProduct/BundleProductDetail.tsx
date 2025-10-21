@@ -53,10 +53,7 @@ const BundleProductDetail = ({ item, onClose }: BundleProductDetailProps) => {
           {product.replacement_cost != null ? product.replacement_cost.toLocaleString() : "-"} Ar
         </p>
         <p>
-          <strong>Stock total :</strong> {product.stock_total}
-        </p>
-        <p>
-          <strong>Stock disponible :</strong> {product.stock_available}
+          <strong>Stock total :</strong> {product.stock_quantity}
         </p>
         <p>
           <strong>Description :</strong> {product.description}

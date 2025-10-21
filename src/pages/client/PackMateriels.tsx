@@ -314,7 +314,7 @@ function PackItem({
 
         <div className="w-full md:w-1/2 flex flex-col gap-4">
           <p className="text-xs uppercase text-pink-500 tracking-wide">
-            Total stock: {item.product.stock_total}
+            Total stock: {item.product.stock_quantity}
           </p>
 
           <h3 className="text-2xl font-bold text-gray-800">
@@ -323,10 +323,6 @@ function PackItem({
 
           <p className="text-base text-gray-600">
             {highlightMatch(item.product.daily_price.toString() + " Ar", q)}
-          </p>
-
-          <p className="text-base text-gray-600">
-            Stock disponible: {item.product.stock_available}
           </p>
 
           <div className="py-4 border-b-2 border-gray-200">

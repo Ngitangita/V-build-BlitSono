@@ -26,8 +26,6 @@ const MaterielSearch = ({
   setSearchPrix,
   searchStockTotal,
   setSearchStockTotal,
-  searchStockAvailable,
-  setSearchStockAvailable,
   searchCategorie,
   setSearchCategorie,
   searchStatus,
@@ -103,14 +101,7 @@ const MaterielSearch = ({
             size="small"
             sx={{ ...textFieldSx, width: { xs: "200px", sm: "100px" } }}
           />
-          <TextField
-            label="Stock dispo"
-            value={searchStockAvailable}
-            onChange={(e) => setSearchStockAvailable(e.target.value)}
-            variant="outlined"
-            size="small"
-            sx={{ ...textFieldSx, width: { xs: "200px", sm: "100px" } }}
-          />
+          
           <TextField
             select
             label="Statut"

@@ -1,5 +1,6 @@
 import { useForm } from "react-hook-form";
 import axiosClient from "../../../conf/axiosClient";
+import { toast } from "react-toastify";
 
 interface FormData {
   name: string;
@@ -18,8 +19,10 @@ function PostCategory({ onClose, onCategoryCreated }: Props) {
       await axiosClient.post("/categories", data);
       onCategoryCreated();
       onClose();
+      toast.success(`Catégorie "${data.name}" créée avec succès`);
     } catch (err) {
       console.error("Erreur création catégorie:", err);
+      toast.error("Erreur lors de la création de la catégorie");
     }
   };
 

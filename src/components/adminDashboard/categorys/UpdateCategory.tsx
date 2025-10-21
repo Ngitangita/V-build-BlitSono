@@ -8,6 +8,10 @@ interface Props {
 }
 
 function UpdateCategory({ categoryToEdit, setCategoryToEdit, onSave, onCancel }: Props) {
+
+  
+
+
   return (
     <div className="p-6">
       <input

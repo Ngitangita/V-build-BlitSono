@@ -2,7 +2,9 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axiosClient from "../../conf/axiosClient";
 import type { Reservation } from "../../types/user";
+import type { MaterielsType, PacksType } from "../../types/types";
 import ContactButton from "../../components/clientHome/ContactButton";
+import { Tooltip } from "react-tooltip";
 import AdminReservationDetail from "../admin/AdminReservationDetail";
 import {
   FaCalendarCheck,
@@ -20,12 +22,24 @@ dayjs.locale("fr");
 
 export default function EspaceClient() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [products, setProducts] = useState<MaterielsType[]>([]);
+  const [bundles, setBundles] = useState<PacksType[]>([]);
   const [detail, setDetail] = useState<Reservation | null>(null);
 
   useEffect(() => {
     axiosClient
       .get<Reservation[]>("/reservations")
       .then((resp) => setReservations(resp.data))
+      .catch(console.error);
+
+    axiosClient
+      .get<MaterielsType[]>("/products")
+      .then((resp) => setProducts(resp.data))
+      .catch(console.error);
+
+    axiosClient
+      .get<PacksType[]>("/bundles")
+      .then((resp) => setBundles(resp.data))
       .catch(console.error);
   }, []);
 
@@ -156,28 +170,33 @@ export default function EspaceClient() {
                         onClick={() =>
                           r.id_reservation && fetchById(r.id_reservation)
                         }
+                        data-tooltip-id="tooltip"
+                        data-tooltip-content="Voir les détails"
                         className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded cursor-pointer"
                       >
                         <MdVisibility />
                       </button>
                       <Link
                         to={`/devis/${r.id_reservation}`}
+                        data-tooltip-id="tooltip"
+                        data-tooltip-content="Voir Devis"
                         className="p-1.5 sm:p-2 text-white rounded bg-[#18769C] hover:bg-[#0f5a70]"
-                        title="Voir Devis"
                       >
                         <FaCalendarAlt size={16} />
                       </Link>
                       <Link
                         to={`/facture/${r.id_reservation}`}
+                        data-tooltip-id="tooltip"
+                        data-tooltip-content="Voir Facture"
                         className="p-1.5 sm:p-2 text-white rounded bg-[#18769C] hover:bg-[#0f5a70]"
-                        title="Voir Facture"
                       >
                         <FaFileAlt size={16} />
                       </Link>
                       <Link
                         to={`/paiement/${r.id_reservation}`}
+                        data-tooltip-id="tooltip"
+                        data-tooltip-content="Voir Paiement"
                         className="p-1.5 sm:p-2 text-white rounded bg-[#18769C] hover:bg-[#0f5a70]"
-                        title="Voir Paiement"
                       >
                         <FaCreditCard size={16} />
                       </Link>
@@ -206,9 +225,16 @@ export default function EspaceClient() {
       {detail && (
         <AdminReservationDetail
           reservation={detail}
+          products={products}
+          bundles={bundles}
           onClose={() => setDetail(null)}
         />
       )}
+
+      <Tooltip
+        id="tooltip"
+        className="z-50 text-sm bg-gray-800 text-white p-2 rounded"
+      />
     </div>
   );
 }

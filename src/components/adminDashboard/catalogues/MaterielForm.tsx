@@ -1,4 +1,4 @@
-import { useForm, Controller} from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
 import {
   TextField,
@@ -9,6 +9,7 @@ import {
 import type { MaterielsType, Category } from "../../../types/types";
 import { useEffect, useState, useRef } from "react";
 import axiosClient from "./../../../conf/axiosClient";
+import { toast } from "react-toastify"; 
 
 type Props = {
   materiel: MaterielsType | null;
@@ -21,29 +22,25 @@ export default function MaterielForm({ materiel, onSave, onCancel }: Props) {
   const overlayRef = useRef<HTMLDivElement>(null);
 
   const { register, handleSubmit, control, reset } = useForm<
-  MaterielsType & { file?: FileList }
->({
-  defaultValues: {
-    id_product: 0,
-    name: "",
-    description: "",
-    daily_price: 0,
-    replacement_cost: 0,
-    is_active: true,
-    category: { id_category: undefined, name: "" },
-    created_at: "",
-    updated_at: "",
-    image_url: "",
-    stock_total: 0,
-    stock_available: 0,
-  },
-});
-
+    MaterielsType & { file?: FileList }
+  >({
+    defaultValues: {
+      id_product: 0,
+      name: "",
+      description: "",
+      daily_price: 0,
+      replacement_cost: 0,
+      is_active: true,
+      category: { id_category: undefined, name: "" },
+      created_at: "",
+      updated_at: "",
+      image_url: "",
+      stock_quantity: 0,
+    },
+  });
 
   useEffect(() => {
-    if (materiel) {
-      reset(materiel);
-    }
+    if (materiel) reset(materiel);
   }, [materiel, reset]);
 
   useEffect(() => {
@@ -55,7 +52,9 @@ export default function MaterielForm({ materiel, onSave, onCancel }: Props) {
       .catch(() => setCategories([]));
   }, []);
 
-  const onSubmit: SubmitHandler<MaterielsType> = async (data) => {
+  const onSubmit: SubmitHandler<MaterielsType & { file?: FileList }> = async (
+    data
+  ) => {
     try {
       const res = await axiosClient({
         method: materiel?.id_product ? "put" : "post",
@@ -69,8 +68,7 @@ export default function MaterielForm({ materiel, onSave, onCancel }: Props) {
           replacement_cost: data.replacement_cost,
           is_active: data.is_active ? 1 : 0,
           id_category: data.category?.id_category,
-          stock_total: data.stock_total,
-          stock_available: data.stock_available,
+          stock_quantity: data.stock_quantity,
         },
       });
 
@@ -81,11 +79,17 @@ export default function MaterielForm({ materiel, onSave, onCancel }: Props) {
       onSave({
         ...savedProduct,
         image_url: savedProduct.image_url ?? "",
-        stock_total: savedProduct.stock_total ?? 0,
-        stock_available: savedProduct.stock_available ?? 0,
+        stock_quantity: savedProduct.stock_quantity ?? 0,
       });
+
+      toast.success(
+        `Le matériel "${savedProduct.name}" a été ${
+          materiel ? "mis à jour" : "créé"
+        } avec succès !`
+      );
     } catch (err) {
       console.error("Erreur lors de l'enregistrement :", err);
+      toast.error("Erreur lors de l'enregistrement du matériel");
     }
   };
 
@@ -156,16 +160,7 @@ export default function MaterielForm({ materiel, onSave, onCancel }: Props) {
           <div className="flex flex-col w-full">
             <label className="mb-1">Stock total</label>
             <input
-              {...register("stock_total", { valueAsNumber: true })}
-              type="number"
-              className="w-full p-2 border rounded outline-[#18769C] border-[#18769C]/50"
-            />
-          </div>
-
-          <div className="flex flex-col w-full">
-            <label className="mb-1">Stock disponible</label>
-            <input
-              {...register("stock_available", { valueAsNumber: true })}
+              {...register("stock_quantity", { valueAsNumber: true })}
               type="number"
               className="w-full p-2 border rounded outline-[#18769C] border-[#18769C]/50"
             />
@@ -181,8 +176,7 @@ export default function MaterielForm({ materiel, onSave, onCancel }: Props) {
                   options={categories}
                   getOptionLabel={(o) => o.name}
                   value={
-                    categories.find((c) => c.id_category === field.value) ??
-                    null
+                    categories.find((c) => c.id_category === field.value) ?? null
                   }
                   onChange={(_, v) => field.onChange(v ? v.id_category : null)}
                   renderInput={(params) => <TextField {...params} />}

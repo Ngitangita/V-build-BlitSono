@@ -79,8 +79,7 @@ export default function Catalogue() {
         const mapped: MaterielsType[] = arr.map((m) => ({
           ...m,
           image_url: m.image_url ?? "",
-          stock_total: m.stock_total ?? 0,
-          stock_available: m.stock_available ?? 0,
+          stock_quantity: m.stock_quantity ?? 0,
         }));
 
         setMateriels(mapped);

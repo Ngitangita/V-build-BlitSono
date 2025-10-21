@@ -1,11 +1,12 @@
 import { useEffect, useState, useRef } from "react";
 import axiosClient from "../../conf/axiosClient";
-import { TextField } from "@mui/material";
 import { FaRegEdit } from "react-icons/fa";
 import { MdDelete, MdInfoOutline } from "react-icons/md";
 import PostCategory from "../../components/adminDashboard/categorys/PostCategory";
 import UpdateCategory from "../../components/adminDashboard/categorys/UpdateCategory";
 import type { Category } from "../../types/types";
+import { Tooltip } from "react-tooltip";
+import { toast } from "react-toastify";
 
 function AdminCategory() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -43,6 +44,7 @@ function AdminCategory() {
       setCategories(list);
     } catch {
       setError("Erreur lors du chargement des catégories");
+      toast.error("Erreur lors du chargement des catégories");
     }
   };
 
@@ -69,18 +71,26 @@ function AdminCategory() {
       await axiosClient.delete(`/categories/${toDelete.id_category}`);
       setIsDeleteOpen(false);
       fetchCategories();
+      toast.success(`La catégorie "${toDelete.name}" a été supprimée`);
     } catch (err) {
       console.error("Erreur lors de la suppression :", err);
+      toast.error("Erreur lors de la suppression de la catégorie");
     }
   };
 
   const handleEditSave = async () => {
     if (!toEdit) return;
-    await axiosClient.put(`/categories/${toEdit.id_category}`, {
-      name: toEdit.name,
-    });
-    setIsEditOpen(false);
-    fetchCategories();
+    try {
+      await axiosClient.put(`/categories/${toEdit.id_category}`, {
+        name: toEdit.name,
+      });
+      setIsEditOpen(false);
+      fetchCategories();
+      toast.success(`La catégorie "${toEdit.name}" a été mise à jour`);
+    } catch (err) {
+      console.error("Erreur lors de la modification :", err);
+      toast.error("Erreur lors de la modification de la catégorie");
+    }
   };
 
   const filtered = categories
@@ -94,41 +104,19 @@ function AdminCategory() {
         <div className="flex flex-row flex-wrap items-start gap-2 mb-4 bg-white p-6 rounded">
           {error && <p className="text-red-500">{error}</p>}
           <button
+            data-tooltip-id="tooltip"
+            data-tooltip-content="Ajouter une catégorie"
             onClick={() => setIsCreateOpen(true)}
             className="inline-block px-4 py-2 bg-[#18769C] hover:bg-[#0f5a70] text-white font-medium rounded cursor-pointer"
           >
             + Ajouter catégorie
           </button>
-          <TextField
-            label="Rechercher une catégorie"
+          <input
             type="search"
-            variant="outlined"
-            size="small"
+            placeholder="Rechercher une catégorie"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            sx={{
-              width: "250px",
-              height: "40px",
-              ".MuiInputBase-root": {
-                height: "40px",
-              },
-              "& .MuiInputLabel-outlined": {
-                color: "#18769C",
-              },
-              "& .MuiInputLabel-outlined.Mui-focused": {
-                color: "#0f5a70",
-              },
-              "& .MuiOutlinedInput-notchedOutline": {
-                borderColor: "#18769C",
-              },
-              "&:hover .MuiOutlinedInput-notchedOutline": {
-                borderColor: "#18769C",
-              },
-              "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
-                {
-                  borderColor: "#0f5a70",
-                },
-            }}
+            className="border border-gray-300 rounded px-3 py-1 w-60 focus:outline-none focus:ring-2 focus:ring-[#18769C]"
           />
         </div>
 
@@ -150,12 +138,16 @@ function AdminCategory() {
                     <td className="py-3 px-4">{c.name}</td>
                     <td className="py-3 px-4 flex justify-center gap-2">
                       <button
+                        data-tooltip-id="tooltip"
+                        data-tooltip-content="Modifier"
                         onClick={() => openEdit(c)}
                         className="inline-block p-2 bg-[#18769C] hover:bg-[#0f5a70] text-white font-medium rounded transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#18769C]/50 cursor-pointer"
                       >
                         <FaRegEdit />
                       </button>
                       <button
+                        data-tooltip-id="tooltip"
+                        data-tooltip-content="Supprimer"
                         onClick={() => openDelete(c)}
                         className="bg-red-500 text-white p-2 rounded hover:bg-red-600 cursor-pointer"
                       >
@@ -178,18 +170,19 @@ function AdminCategory() {
           </table>
         </div>
       </div>
+
       {isCreateOpen && (
         <div
           ref={createRef}
-          onClick={(e) =>
-            handleOverlayClick(e, createRef, () => setIsCreateOpen(false))
-          }
+          onClick={(e) => handleOverlayClick(e, createRef, () => setIsCreateOpen(false))}
           className="fixed inset-0 bg-[#1E2939]/80 bg-opacity-50 flex items-center justify-center z-50"
         >
           <div className="bg-white rounded-lg shadow-lg w-[90%] sm:w-[400px]">
             <div className="flex justify-between items-center p-4">
               <h2 className="text-xl">Créer une nouvelle catégorie</h2>
               <button
+                data-tooltip-id="tooltip"
+                data-tooltip-content="Fermer"
                 onClick={() => setIsCreateOpen(false)}
                 className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600 text-3xl relative bottom-4 left-4 cursor-pointer"
               >
@@ -207,9 +200,7 @@ function AdminCategory() {
       {isDeleteOpen && toDelete && (
         <div
           ref={deleteRef}
-          onClick={(e) =>
-            handleOverlayClick(e, deleteRef, () => setIsDeleteOpen(false))
-          }
+          onClick={(e) => handleOverlayClick(e, deleteRef, () => setIsDeleteOpen(false))}
           className="fixed inset-0 bg-[#1E2939]/80 bg-opacity-50 flex items-center justify-center z-50"
         >
           <div className="bg-white rounded-lg shadow-lg w-[90%] sm:w-[400px] p-6">
@@ -219,12 +210,16 @@ function AdminCategory() {
             </p>
             <div className="flex justify-between">
               <button
+                data-tooltip-id="tooltip"
+                data-tooltip-content="Annuler"
                 onClick={() => setIsDeleteOpen(false)}
                 className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
               >
                 Non
               </button>
               <button
+                data-tooltip-id="tooltip"
+                data-tooltip-content="Confirmer la suppression"
                 onClick={handleDelete}
                 className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
               >
@@ -238,15 +233,15 @@ function AdminCategory() {
       {isEditOpen && toEdit && (
         <div
           ref={editRef}
-          onClick={(e) =>
-            handleOverlayClick(e, editRef, () => setIsEditOpen(false))
-          }
+          onClick={(e) => handleOverlayClick(e, editRef, () => setIsEditOpen(false))}
           className="fixed inset-0 bg-[#1E2939]/80 bg-opacity-50 flex items-center justify-center z-50"
         >
           <div className="bg-white rounded-lg shadow-lg w-[90%] sm:w-[400px]">
             <div className="flex justify-between items-center p-4">
               <h2 className="text-xl">Modifier la catégorie</h2>
               <button
+                data-tooltip-id="tooltip"
+                data-tooltip-content="Fermer"
                 onClick={() => setIsEditOpen(false)}
                 className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600 text-3xl relative bottom-4 left-4 cursor-pointer"
               >
@@ -262,6 +257,11 @@ function AdminCategory() {
           </div>
         </div>
       )}
+
+      <Tooltip
+        id="tooltip"
+        className="z-50 text-sm bg-gray-800 text-white p-2 rounded"
+      />
     </div>
   );
 }
