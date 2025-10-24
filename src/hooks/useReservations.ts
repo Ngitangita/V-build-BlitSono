@@ -5,7 +5,7 @@ import type { Reservation } from "../types/user";
 import type { MaterielsType, PacksType } from "../types/types";
 
 type ModalAction = {
-  type: "cancel" | "confirm" | "delete" | null;
+  type: "pending" | "validated" | "confirmed" | "cancelled" | "delete" | null;
   reservation: Reservation | null;
 };
 
@@ -43,8 +43,16 @@ export default function useReservations() {
   };
 
   const fetchAll = () => {
-    fetchData("/reservations", setReservations, "Erreur lors du chargement des réservations");
-    fetchData("/products", setProducts, "Erreur lors du chargement des produits");
+    fetchData(
+      "/reservations",
+      setReservations,
+      "Erreur lors du chargement des réservations"
+    );
+    fetchData(
+      "/products",
+      setProducts,
+      "Erreur lors du chargement des produits"
+    );
     fetchData("/bundles", setBundles, "Erreur lors du chargement des bundles");
   };
 
@@ -82,27 +90,37 @@ export default function useReservations() {
     );
   });
 
-  const openModal = (type: "cancel" | "confirm" | "delete", reservation: Reservation) =>
+  const openModal = (
+    type: "pending" | "validated" | "confirmed" | "cancelled" | "delete",
+    reservation: Reservation
+  ) => {
     setModalAction({ type, reservation });
+  };
 
   const closeModal = () => setModalAction({ type: null, reservation: null });
-  const openDetail = (reservation: Reservation) => setSelectedReservation(reservation);
+  const openDetail = (reservation: Reservation) =>
+    setSelectedReservation(reservation);
   const closeDetail = () => setSelectedReservation(null);
 
   const updateReservation = async (
-    reservation: Reservation,
-    type: "confirm" | "cancel" | "delete"
+    type: "pending" | "validated" | "confirmed" | "cancelled" | "delete",
+    reservation: Reservation
   ) => {
     try {
       closeModal();
+      console.log(type);
 
       if (type === "delete") {
         await axiosClient.delete(`/reservations/${reservation.id_reservation}`);
         toast.success("Réservation supprimée avec succès");
       } else {
-        await axiosClient.put(`/reservations/${reservation.id_reservation}/${type}`);
+        await axiosClient.patch(`/reservations/${reservation.id_reservation}`, {
+          status: type,
+        });
         toast.success(
-          `Réservation ${type === "confirm" ? "confirmée" : "annulée"} avec succès`
+          `Réservation ${
+            type === "confirmed" ? "confirmée" : "annulée"
+          } avec succès`
         );
       }
 

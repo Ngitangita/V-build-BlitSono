@@ -6,7 +6,7 @@ export default function ConfirmationModal({
   onClose,
 }: {
   modalAction: {
-    type: "cancel" | "confirm" | null;
+    type: 'pending' |'validated' | 'confirmed' | 'cancelled' | 'delete' | null;
     reservation: Reservation | null;
   };
   onConfirm: () => void;
@@ -24,14 +24,14 @@ export default function ConfirmationModal({
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-lg font-semibold text-gray-800 mb-4">
-          {modalAction.type === "cancel"
+          {modalAction.type === "cancelled"
             ? "Annuler la réservation"
             : "Confirmer la réservation"}
         </h2>
         <p className="text-gray-600 mb-6">
           Êtes-vous sûr de vouloir{" "}
           <strong>
-            {modalAction.type === "cancel" ? "annuler" : "confirmer"}
+            {modalAction.type === "cancelled" ? "annuler" : "confirmer"}
           </strong>{" "}
           la réservation de{" "}
           <span className="font-semibold text-gray-900">
@@ -49,12 +49,12 @@ export default function ConfirmationModal({
           <button
             onClick={onConfirm}
             className={`px-4 py-2 rounded text-white transition cursor-pointer ${
-              modalAction.type === "cancel"
+              modalAction.type === "cancelled"
                 ? "bg-red-600 hover:bg-red-700"
-                : "bg-green-600 hover:bg-green-700"
+                : "inline-block px-4 py-2 bg-[#18769C] hover:bg-[#0f5a70] text-white font-medium rounded transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#18769C]/50 cursor-pointer"
             }`}
           >
-            {modalAction.type === "cancel" ? "Oui, annuler" : "Oui, confirmer"}
+            {modalAction.type === "cancelled" ? "Oui, annuler" : "Oui, confirmer"}
           </button>
         </div>
       </div>

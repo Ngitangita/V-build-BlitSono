@@ -27,11 +27,14 @@ export default function AdminReservations() {
     if (e.target === detailRef.current) closeDetail();
   };
 
-  const confirmationModalAction =
-    modalAction?.type === "delete"
-      ? { type: null, reservation: null }
-      : {
-          type: modalAction?.type as "cancel" | "confirm" | null,
+  const confirmationModalAction = {
+          type: modalAction?.type as
+            | "pending"
+            | "validated"
+            | "confirmed"
+            | "cancelled"
+            | "delete"
+            | null,
           reservation: modalAction?.reservation ?? null,
         };
 
@@ -92,8 +95,8 @@ export default function AdminReservations() {
         onConfirm={() =>
           confirmationModalAction.reservation &&
           updateReservation(
-            confirmationModalAction.reservation,
-            confirmationModalAction.type!
+            confirmationModalAction.type!,
+            confirmationModalAction.reservation
           )
         }
         onClose={closeModal}

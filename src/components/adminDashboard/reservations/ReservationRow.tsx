@@ -12,19 +12,19 @@ export default function ReservationRow({
   r,
   openDetail,
   openModal,
-  modalAction = { type: null, reservation: null },
-  closeModal,
-  updateReservation,
 }: {
   r: Reservation;
   openDetail: (res: Reservation) => void;
-  openModal: (type: "cancel" | "confirm" | "delete", res: Reservation) => void;
+  openModal: (
+    type: "pending" | "validated" | "confirmed" | "cancelled" | "delete",
+    res: Reservation
+  ) => void;
   updateReservation: (
-    reservation: Reservation,
-    type: "confirm" | "cancel" | "delete"
+    type: "pending" | "validated" | "confirmed" | "cancelled" | "delete",
+    reservation: Reservation
   ) => void;
   modalAction?: {
-    type: "cancel" | "confirm" | "delete" | null;
+    type: "pending" | "validated" | "confirmed" | "cancelled" | "delete" | null;
     reservation: Reservation | null;
   };
   closeModal: () => void;
@@ -50,6 +50,7 @@ export default function ReservationRow({
         return "text-yellow-600";
     }
   };
+  
 
   return (
     <>
@@ -98,7 +99,7 @@ export default function ReservationRow({
             <button
               data-tooltip-id="tooltip"
               data-tooltip-content="Confirmer"
-              onClick={() => openModal("confirm", r)}
+              onClick={() => openModal("confirmed", r)}
               className="p-2 bg-green-600 text-white rounded hover:bg-green-700 transition cursor-pointer"
             >
               <FaCheckCircle />
@@ -108,55 +109,22 @@ export default function ReservationRow({
             <button
               data-tooltip-id="tooltip"
               data-tooltip-content="Annuler"
-              onClick={() => openModal("cancel", r)}
+              onClick={() => openModal("cancelled", r)}
               className="p-2 bg-red-600 text-white rounded hover:bg-red-700 transition cursor-pointer"
             >
               <MdCancel />
             </button>
           )}
-          {r.status !== "cancelled" && (
-            <button
-              data-tooltip-id="tooltip"
-              data-tooltip-content="Supprimer"
-              onClick={() => openModal("delete", r)}
-              className="p-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition cursor-pointer"
-            >
-              <MdDelete />
-            </button>
-          )}
+          <button
+            data-tooltip-id="tooltip"
+            data-tooltip-content="Supprimer"
+            onClick={() => openModal("delete", r)}
+            className="p-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition cursor-pointer"
+          >
+            <MdDelete />
+          </button>
         </td>
       </tr>
-
-      {modalAction.type === "delete" && modalAction.reservation && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
-          <div className="bg-white p-6 rounded shadow-lg w-80">
-            <h3 className="text-lg font-semibold mb-4">
-              Confirmer la suppression
-            </h3>
-            <p className="mb-6">
-              Êtes-vous sûr de vouloir supprimer la réservation de{" "}
-              <strong>{modalAction.reservation.user?.first_name}</strong> ?
-            </p>
-            <div className="flex justify-end gap-2">
-              <button
-                onClick={closeModal}
-                className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400"
-              >
-                Annuler
-              </button>
-              <button
-                onClick={() =>
-                  modalAction.reservation &&
-                  updateReservation(modalAction.reservation, "delete")
-                }
-                className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700"
-              >
-                Supprimer
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 }

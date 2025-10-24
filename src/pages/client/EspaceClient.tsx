@@ -14,7 +14,7 @@ import {
   FaFileAlt,
   FaCreditCard,
 } from "react-icons/fa";
-import { MdVisibility } from "react-icons/md";
+import { MdVisibility, MdCancel } from "react-icons/md";
 import dayjs from "dayjs";
 import "dayjs/locale/fr";
 import { convertStatusReservation } from "../../services/convertStatus";
@@ -52,12 +52,17 @@ export default function EspaceClient() {
     }
   };
 
-  const getReservationIcon = (status: Reservation["status"]) =>
-    status === "confirmed" ? (
-      <FaCalendarCheck color="green" />
-    ) : (
-      <FaCalendarAlt color="#f59e0b" />
-    );
+  const getReservationIcon = (status: Reservation["status"]) => {
+  switch (status) {
+    case "confirmed":
+      return <FaCalendarCheck color="green" />;
+    case "cancelled":
+      return <MdCancel color="red" />;
+    default:
+      return <FaCalendarAlt color="#f59e0b" />; 
+  }
+};
+
 
   const hasReservations = reservations.length > 0;
 
@@ -149,6 +154,8 @@ export default function EspaceClient() {
                       className={`px-4 py-2 font-semibold flex flex-row items-center ${
                         r.status === "confirmed"
                           ? "text-green-600"
+                          : r.status === "cancelled"
+                          ? "text-red-600"
                           : "text-yellow-600"
                       }`}
                     >
@@ -157,6 +164,7 @@ export default function EspaceClient() {
                         {convertStatusReservation(r.status.toLowerCase())}
                       </span>
                     </td>
+
                     <td className="px-4 py-2">
                       {r.estimated_price?.toLocaleString()} Ar
                     </td>
