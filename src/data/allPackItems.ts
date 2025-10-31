@@ -17,7 +17,7 @@ export const allPackItems: BundleProductTypes[] = [
       name: "Enceinte JBL EON610",
       description:
         "Système électroacoustique complet pour diffuser et amplifier le son...",
-      daily_price: 100,
+      daily_price: 10000,
       replacement_cost: null,
       is_active: true,
       created_at: new Date().toISOString(),

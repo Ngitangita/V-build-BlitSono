@@ -7,6 +7,7 @@ import {
 import { MdCancel, MdDelete } from "react-icons/md";
 import type { Reservation } from "../../../types/user";
 import { convertStatusReservation } from "../../../services/convertStatus";
+import { toCapitalize } from "../../../utils/toCapitalize";
 
 export default function ReservationRow({
   r,
@@ -55,14 +56,14 @@ export default function ReservationRow({
   return (
     <>
       <tr className="hover:bg-gray-50 even:bg-gray-100">
-        <td className="px-4 py-2">{r.user?.first_name}</td>
+        <td className="px-4 py-2">{toCapitalize(r.user?.first_name)}</td>
         <td className="px-4 py-2">
           {r.event_date
             ? new Date(r.event_date).toLocaleDateString("fr-FR")
             : ""}{" "}
           à {r.event_time}
         </td>
-        <td className="px-4 py-2">{r.location}</td>
+        <td className="px-4 py-2">{toCapitalize(r.location)}</td>
         <td className="px-4 py-2">{r.duration_hours}</td>
         <td className="px-4 py-2 text-left">
           {r.products?.map((p) => (
@@ -86,8 +87,9 @@ export default function ReservationRow({
             <span>{convertStatusReservation(r.status.toLowerCase())}</span>
           </div>
         </td>
-        <td className="px-4 py-2 flex justify-center gap-2">
-          <button
+        <td className="text-center">
+         <div className="px-4 py-2 flex justify-center items-center gap-2 ">
+           <button
             data-tooltip-id="tooltip"
             data-tooltip-content="Voir les détails"
             onClick={() => openDetail(r)}
@@ -123,6 +125,7 @@ export default function ReservationRow({
           >
             <MdDelete />
           </button>
+         </div>
         </td>
       </tr>
     </>

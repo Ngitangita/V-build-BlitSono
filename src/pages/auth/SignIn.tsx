@@ -134,8 +134,10 @@ export const SignIn = () => {
                   {...register("email")}
                   type="email"
                   placeholder="Email"
-                  className={`p-2 w-full border rounded outline-[#18769C] ${
-                    errors.email ? "border-red-500" : "border-[#18769C]/50"
+                   className={`p-2 w-full border rounded outline-[#18769C] ${
+                    errors.email
+                      ? "border-red-500"
+                      : "border-[#18769C]/50"
                   }`}
                 />
                 {errors.email && (

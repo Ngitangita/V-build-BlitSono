@@ -21,18 +21,24 @@ export default function Header() {
   const [open, setOpen] = useState(false);
   const user = useAuthStore((s) => s.user);
 
+  const isActive = (path) => {
+  if (path === "/") {
+    return location.pathname === "/";
+  }
+  return location.pathname.startsWith(path);
+};
+
+
   const logout = () => {
     useAuthStore.getState().logout();
     navigate("/");
     setOpen(false);
   };
 
-  const isActive = (p: string) => location.pathname === p;
-
   return (
     <header className="fixed top-0 w-full bg-[#1E2939] text-white z-50 shadow-lg">
       <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 py-3">
-       
+  
         <Link to="/" className="flex items-center gap-2">
           <img
             src="/logo-blit.png"
@@ -81,22 +87,42 @@ export default function Header() {
               <Link to="/admin">Admin</Link>
             </li>
           )}
+
           <div className="w-40 sm:w-56 lg:w-72">
             <Search />
           </div>
 
           <div className="flex items-center gap-4">
-            <Link to="/basket" className="relative">
-              <FaShoppingCart className="text-2xl hover:text-[#18769C] transition" />
-              {totalItems > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-xs w-5 h-5 flex items-center justify-center rounded-full">
-                  {totalItems}
-                </span>
-              )}
+            <Link
+              to="/basket"
+              className={`inline-flex items-center justify-center ${
+                isActive("/basket")
+                  ? "text-[#18769C]"
+                  : "hover:text-[#18769C]"
+              }`}
+            >
+              <div className="relative">
+                <FaShoppingCart
+                  className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.7rem] xl:text-[3rem] 2xl:text-[3.3rem] hover:text-[#18769C] transition"
+                />
+                {totalItems > 0 && (
+                  <span
+                    className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] sm:text-xs w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center rounded-full shadow-md font-semibold"
+                  >
+                    {totalItems}
+                  </span>
+                )}
+              </div>
             </Link>
 
             <Link to="/sign-in">
-              <FaUser className="text-2xl hover:text-[#18769C] transition" />
+              <FaUser
+                className={`text-3xl hover:text-[#18769C] transition ${
+                  isActive("/sign-in")
+                    ? "text-[#18769C]"
+                    : "hover:text-[#18769C]"
+                }`}
+              />
             </Link>
 
             {isAuth && (
@@ -133,8 +159,9 @@ export default function Header() {
                 )
             )}
           </nav>
-          <div className="mt-4 flex items-center gap-4">
-            <Link to="/basket" onClick={() => setOpen(false)}>
+
+          <div className="mt-4 flex items-center gap-4 relative">
+            <Link to="/basket" onClick={() => setOpen(false)} className="relative">
               <FaShoppingCart className="text-2xl hover:text-[#18769C] transition" />
               {totalItems > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-500 text-xs w-5 h-5 flex items-center justify-center rounded-full">
@@ -142,9 +169,11 @@ export default function Header() {
                 </span>
               )}
             </Link>
+
             <Link to="/sign-in" onClick={() => setOpen(false)}>
-              <FaUser className="text-2xl hover:text-[#18769C] transition" />
+              <FaUser className="text-3xl hover:text-[#18769C] transition" />
             </Link>
+
             {isAuth && (
               <button onClick={logout} className="cursor-pointer">
                 <MdLogin className="text-2xl hover:text-[#18769C] transition" />

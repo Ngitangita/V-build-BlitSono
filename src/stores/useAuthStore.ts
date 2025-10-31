@@ -32,7 +32,7 @@ export const useAuthStore = createSelectors(authStore) as typeof authStore & {
     user: () => UserType | null; 
     setIsAuthenticated: () => (auth: boolean) => void;
     setToken: () => (token: string | null) => void;
-    setUser: () => (user: UserType | null) => void; // ✅
+    setUser: () => (user: UserType | null) => void; 
     logout: () => () => void;
   };
 };

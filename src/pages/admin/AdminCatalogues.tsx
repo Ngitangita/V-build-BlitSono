@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axiosClient from "../../conf/axiosClient";
-import { FaRegEdit } from "react-icons/fa";
+import { FaRegEdit, FaExclamationTriangle } from "react-icons/fa";
 import { MdDelete, MdInfoOutline, MdVisibility } from "react-icons/md";
 import MaterielForm from "../../components/adminDashboard/catalogues/MaterielForm";
 import DeleteConfirm from "../../components/adminDashboard/catalogues/DeleteConfirm";
@@ -65,6 +65,7 @@ function AdminCatalogues() {
     try {
       const res = await axiosClient.get(`/products/${id_product}`);
       const product = res.data;
+      
       if (product) {
         setDetail({
           ...product,
@@ -240,7 +241,13 @@ function AdminCatalogues() {
                         {(m.replacement_cost ?? 0).toLocaleString()} Ar
                       </td>
                       <td className="px-4 py-2 text-center whitespace-nowrap">
-                        {m.stock_quantity}
+                        {m.stock_quantity <= 5 ? (
+                          <span className="text-red-500 text-center">
+                           <FaExclamationTriangle/> {m.stock_quantity}, stock faible
+                          </span>
+                        ) : (
+                          <span>{m.stock_quantity}</span>
+                        )}
                       </td>
                       <td className="px-4 py-2">
                         {(m.description ?? "").split(" ").length > 2
@@ -253,7 +260,9 @@ function AdminCatalogues() {
                       <td className="px-4 py-2 whitespace-nowrap">
                         <span
                           data-tooltip-id="tooltip"
-                          data-tooltip-content={m.is_active ? "Désactiver" : "Activer"}
+                          data-tooltip-content={
+                            m.is_active ? "Désactiver" : "Activer"
+                          }
                           onClick={async () => {
                             try {
                               await axiosClient.put(
@@ -287,7 +296,8 @@ function AdminCatalogues() {
                           data-tooltip-id="tooltip"
                           data-tooltip-content="Voir détails"
                           onClick={() =>
-                            m.id_product !== undefined && fetchById(m.id_product)
+                            m.id_product !== undefined &&
+                            fetchById(m.id_product)
                           }
                           className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded cursor-pointer"
                         >
@@ -321,10 +331,22 @@ function AdminCatalogues() {
       </div>
 
       {showForm && (
-        <MaterielForm materiel={current} onSave={handleSave} onCancel={closeForm} />
+        <MaterielForm
+          materiel={current}
+          onSave={handleSave}
+          onCancel={closeForm}
+        />
       )}
-      {detail && <MaterielDetail materiel={detail} onClose={() => setDetail(null)} />}
-      {deleting && <DeleteConfirm item={deleting.name} onCancel={cancelDelete} onConfirm={handleDelete} />}
+      {detail && (
+        <MaterielDetail materiel={detail} onClose={() => setDetail(null)} />
+      )}
+      {deleting && (
+        <DeleteConfirm
+          item={deleting.name}
+          onCancel={cancelDelete}
+          onConfirm={handleDelete}
+        />
+      )}
 
       <Tooltip
         id="tooltip"

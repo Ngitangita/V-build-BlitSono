@@ -8,6 +8,7 @@ import { useCartStore } from "../../stores/useCartStore";
 import { useAuthStore } from "../../stores/useAuthStore";
 import type { CartItem, BasketItem } from "../../types/cart";
 import type { UserType } from "../../types/user";
+import { Tooltip } from "react-tooltip";
 
 export type BasketFormProps = {
   items: CartItem[];
@@ -51,14 +52,14 @@ export default function BasketForm({
 
   const validate = () => {
     const e: Record<string, string> = {};
-    if (!formData.eventDate) e.eventDate = "Date requise.";
-    if (!formData.eventTime) e.eventTime = "Heure requise.";
-    if (!formData.location.trim()) e.location = "Lieu requis.";
+    if (!formData.eventDate) e.eventDate = "Veuillez choisir la date.";
+    if (!formData.eventTime) e.eventTime = "Veuillez sélectionner l’heure.";
+    if (!formData.location.trim()) e.location = "Veuillez indiquer le lieu.";
     if (!formData.duration || Number(formData.duration) < 1)
-      e.duration = "Durée invalide.";
+      e.duration = "Veuillez indiquer une durée valide.";
     return e;
   };
-  
+
   const sendReservation = async () => {
     const payload = {
       event_date: formData.eventDate,
@@ -89,9 +90,17 @@ export default function BasketForm({
             const msg =
               "Certains articles sont indisponibles pour cette période :\n" +
               unavailableItems
-                .map((i: BasketItem) => `- ${i.name} (disponible: ${i.availableQty})`)
+                .map(
+                  (i: BasketItem) =>
+                    `- ${i.name} (disponible: ${i.availableQty})`
+                )
                 .join("\n") +
               "\nVeuillez modifier la date, la quantité ou remplacer l'article.";
+            toast.error(msg);
+          } else {
+            const msg =
+              err.response?.data?.message ||
+              "Conflit de réservation : certains articles ne sont plus disponibles. Veuillez modifier la date, la quantité ou remplacer l'article.";
             toast.error(msg);
           }
         } else {
@@ -249,9 +258,11 @@ export default function BasketForm({
             </div>
             <span>{(item.price * item.quantity).toFixed(2)} Ar</span>
             <button
+              data-tooltip-id="tooltip"
+              data-tooltip-content="Supprimer"
               type="button"
               onClick={() => remove(item.id)}
-              className="p-1 text-red-600 hover:text-red-800"
+              className="p-1 text-red-600 hover:text-red-800 cursor-pointer"
             >
               <MdDelete size={20} />
             </button>
@@ -287,10 +298,13 @@ export default function BasketForm({
           </button>
         )}
       </div>
+      <Tooltip
+        id="tooltip"
+        className="z-50 text-sm bg-gray-800 text-white p-2 rounded"
+      />
     </form>
   );
 }
-
 
 function Input({
   label,
